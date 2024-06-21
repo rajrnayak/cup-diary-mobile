@@ -1,65 +1,20 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { Card, Chip, Dialog, GridList, Modal, SegmentedControl, Text, View } from "react-native-ui-lib";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRef } from "react";
+import { Card, Chip, GridList, SegmentedControl, Text, View } from "react-native-ui-lib";
+import CupListModal from "./CupListModal.jsx";
+import CupListCardDetails from "./CupListCardDetails.jsx";
+import OverviewCardDetails from "./OverviewCardDetails.jsx";
 
 const HomeScreen = () => {
 	let cups = [
 		// Vendor, Entry At, Total Cups, Total Amount, Remark, Created By
 		{ vendor_name: "Ankit Bhai", entry_at: "2 May 2024", total_cups: 2, total_amount: 300, remark: "Nothing", user_name: "Raj" },
+		{ vendor_name: "DaudBhai", entry_at: "3 May 2024", total_cups: 100, total_amount: 1000, remark: "", user_name: "Raj" },
 	];
 
-	const dialogBoxRef = useRef(null);
+	const modalRef = useRef(null);
 
-	const openDialogBox = (cupList) => {
-		dialogBoxRef.current.open(cupList);
-	};
-
-	const OverviewCardDetails = ({ icon, text, value, amountIcon }) => {
-		return (
-			<>
-				<View flex center padding-20>
-					<View flex-1 row center gap-10>
-						<Ionicons name={icon} size={32} color="#5AB2FF" />
-						<Text>{text}</Text>
-					</View>
-					<View flex-1 center>
-						<Text text30>{amountIcon ? "₹" + value : value}</Text>
-					</View>
-				</View>
-			</>
-		);
-	};
-
-	const CupListCardDetails = ({ cupList }) => {
-		return (
-			<>
-				<View flex row padding-5>
-					<View flex-6 gap-5>
-						<Text text50BO color="#00A9FF">
-							{cupList.vendor_name}
-						</Text>
-						<Text>{cupList.entry_at}</Text>
-					</View>
-					<View flex-5 gap-5>
-						<View flex row gap-5 center>
-							<Text>Total Cups :</Text>
-							<Text text70BO color="#00A9FF">
-								{cupList.total_cups}
-							</Text>
-						</View>
-						<View flex row gap-5 center>
-							<Text>Total Amount :</Text>
-							<Text text70BO color="#00A9FF">
-								{cupList.total_amount}
-							</Text>
-						</View>
-					</View>
-					<View flex-1 center>
-						<Ionicons name="chevron-forward-outline" size={20} />
-					</View>
-				</View>
-			</>
-		);
+	const openModal = (cupList) => {
+		modalRef.current.open(cupList);
 	};
 
 	return (
@@ -101,7 +56,7 @@ const HomeScreen = () => {
 							numColumns={1}
 							itemSpacing={2}
 							renderItem={({ item }) => (
-								<Card backgroundColor="white" padding-6 paddingL-10 paddingR-10 margin-4 onPress={() => openDialogBox(item)}>
+								<Card backgroundColor="white" padding-6 paddingL-10 paddingR-10 margin-4 onPress={() => openModal(item)}>
 									<CupListCardDetails cupList={item} />
 								</Card>
 							)}
@@ -109,84 +64,9 @@ const HomeScreen = () => {
 					</View>
 				</View>
 			</View>
-			<CupListDialogBox ref={dialogBoxRef} />
+			<CupListModal ref={modalRef} />
 		</>
 	);
 };
-
-const CupListDialogBox = forwardRef((props, ref) => {
-	const [isVisible, setIsVisible] = useState(false);
-
-	const cupListData = useRef({});
-
-	const open = (cupList) => {
-		cupListData.current = cupList;
-		setIsVisible(true);
-	};
-
-	const close = () => {
-		setIsVisible(false);
-		cupListData.current = {};
-	};
-
-	useImperativeHandle(
-		ref,
-		() => {
-			return {
-				open,
-				close,
-			};
-		},
-		[]
-	);
-
-	return (
-		<>
-			<Modal visible={isVisible} onBackgroundPress={() => close()} animationType="slide" onRequestClose={() => close()} transparent>
-				<View flex bottom margin-10>
-					<Card padding-20 onPress={() => close()}>
-						<View gap-10>
-							<View center paddingB-10>
-								<Text text40BO color="#00A9FF">
-									Cup-List Details
-								</Text>
-							</View>
-							<View row>
-								<Text flex>Vendor Name : </Text>
-								<Text flex text60BO>
-									{cupListData.current.vendor_name}
-								</Text>
-							</View>
-							<View row>
-								<Text flex>Entry At : </Text>
-								<Text flex text70BO>
-									{cupListData.current.entry_at}
-								</Text>
-							</View>
-							<View row>
-								<Text flex>User Name : </Text>
-								<Text flex text70BO>
-									{cupListData.current.user_name}
-								</Text>
-							</View>
-							<View row>
-								<Text flex>Total Cups : </Text>
-								<Text flex text70BO>
-									{cupListData.current.total_cups}
-								</Text>
-							</View>
-							<View row>
-								<Text flex>Total Amount : </Text>
-								<Text flex text70BO>
-									{cupListData.current.total_amount}
-								</Text>
-							</View>
-						</View>
-					</Card>
-				</View>
-			</Modal>
-		</>
-	);
-});
 
 export default HomeScreen;
