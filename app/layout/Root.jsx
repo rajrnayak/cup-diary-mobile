@@ -4,17 +4,25 @@ import HomeScreen from "../pages/home/HomeScreen.jsx";
 import CupListScreen from "../pages/cup-list/CupListScreen.jsx";
 import PaymentScreen from "../pages/payment/PaymentScreen.jsx";
 import ProfileScreen from "../pages/profile/ProfileScreen.jsx";
+import { Pressable } from "react-native";
+import { useDispatch } from "react-redux";
+import { logOut } from "../manage-state/auth-state/userAuthSlice.js";
 
 const Tab = createBottomTabNavigator();
 
 const Root = () => {
+	const dispatch = useDispatch();
+
+	function logout() {
+        dispatch(logOut());
+    }
 	return (
 		<>
 			<Tab.Navigator
 				screenOptions={({ route }) => ({
 					headerTitleAlign: "center",
 					headerStyle: {
-						backgroundColor: "#00A9FF",
+						backgroundColor: "#4bc2ff",
 					},
 					tabBarStyle: {
 						height: 70,
@@ -47,6 +55,12 @@ const Root = () => {
 					component={HomeScreen}
 					options={{
 						title: "Home",
+						headerRight: () => (
+							<Pressable
+								onPress={logout}>
+								{({ pressed }) => <Ionicons name='log-out' color={pressed ? '#6dc5d1' : 'white'} size={40} />}
+							</Pressable>
+						),
 					}}
 				/>
 				<Tab.Screen
