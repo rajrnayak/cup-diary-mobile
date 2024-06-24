@@ -1,20 +1,61 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card, Chip, GridList, SegmentedControl, Text, View } from "react-native-ui-lib";
 import CupListModal from "./CupListModal.jsx";
 import CupListCardDetails from "./CupListCardDetails.jsx";
 import OverviewCardDetails from "./OverviewCardDetails.jsx";
+import axios from "axios";
 
 const HomeScreen = () => {
-	let cups = [
-		// Vendor, Entry At, Total Cups, Total Amount, Remark, Created By
-		{ vendor_name: "Ankit Bhai", entry_at: "2 May 2024", total_cups: 2, total_amount: 300, remark: "Nothing", user_name: "Raj" },
-		{ vendor_name: "DaudBhai", entry_at: "3 May 2024", total_cups: 100, total_amount: 1000, remark: "", user_name: "Raj" },
-	];
+	let cups = [];
+	const [cupListTotal, setCupListTotal] = useState({
+		total_cups: 0,
+		total_amount: 0,
+	});
+	const [cupList, setCupList] = useState([]);
 
 	const modalRef = useRef(null);
 
 	const openModal = (cupList) => {
 		modalRef.current.open(cupList);
+	};
+
+	useEffect(() => {
+		loadData();
+	}, []);
+
+	const loadData = async () => {
+		await loadCupListTotal(0);
+		await loadCupList();
+	};
+
+	const loadCupListTotal = (durationNumber) => {
+		data = { type: durationNumber };
+		axios({
+			method: "post",
+			url: "http://192.168.1.9:8000/load-cup-list-total",
+			data: data,
+			headers: {},
+		})
+			.then((response) => {
+				console.log(response.data);
+				setCupListTotal(response.data);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+	};
+
+	const loadCupList = () => {
+		axios({
+			method: "get",
+			url: "http://192.168.1.9:8000/api/load-last-7-days-record",
+		})
+			.then((response) => {
+				setCupList(response.data.last_7_days);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
 	};
 
 	return (
@@ -26,15 +67,15 @@ const HomeScreen = () => {
 							<Text text50>Overview</Text>
 						</View>
 						<View flex-2 right>
-							<SegmentedControl backgroundColor="white" segmentLabelStyle={{ width: 40, textAlign: "center" }} activeColor="#5AB2FF" segments={[{ label: "Week" }, { label: "Month" }]} />
+							<SegmentedControl initialIndex={0} backgroundColor="white" segmentLabelStyle={{ width: 40, textAlign: "center" }} activeColor="#5AB2FF" segments={[{ label: "Week" }, { label: "Month" }]} />
 						</View>
 					</View>
 					<View flex-2 row gap-10>
 						<Card flex backgroundColor="white">
-							<OverviewCardDetails icon="cafe-outline" text="Total Orders" value="500" />
+							<OverviewCardDetails icon="cafe-outline" text="Total Orders" value={cupListTotal.total_cups} />
 						</Card>
 						<Card flex center backgroundColor="white">
-							<OverviewCardDetails icon="cash-outline" text="Total Amounts" value="5000" amountIcon />
+							<OverviewCardDetails icon="cash-outline" text="Total Amounts" value={cupListTotal.total_amount} amountIcon />
 						</Card>
 					</View>
 				</View>
@@ -52,7 +93,7 @@ const HomeScreen = () => {
 					<View flex-6>
 						<GridList
 							listPadding={5}
-							data={cups}
+							data={cupList}
 							numColumns={1}
 							itemSpacing={2}
 							renderItem={({ item }) => (
