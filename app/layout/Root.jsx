@@ -14,8 +14,8 @@ const Root = () => {
 	const dispatch = useDispatch();
 
 	function logout() {
-        dispatch(logOut());
-    }
+		dispatch(logOut());
+	}
 	return (
 		<>
 			<Tab.Navigator
@@ -55,12 +55,7 @@ const Root = () => {
 					component={HomeScreen}
 					options={{
 						title: "Home",
-						headerRight: () => (
-							<Pressable
-								onPress={logout}>
-								{({ pressed }) => <Ionicons name='log-out' color={pressed ? '#6dc5d1' : 'white'} size={40} />}
-							</Pressable>
-						),
+						headerRight: () => <Pressable onPress={logout}>{({ pressed }) => <Ionicons name="log-out" color={pressed ? "#6dc5d1" : "white"} size={40} />}</Pressable>,
 					}}
 				/>
 				<Tab.Screen

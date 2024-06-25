@@ -7,19 +7,19 @@ const CupListCardDetails = ({ cupList }) => {
 			<View flex row padding-5>
 				<View flex-6 gap-5 marginL-5>
 					<Text text50BO color="#00A9FF">
-						{cupList.vendor_name}
+						{cupList.vendors.name}
 					</Text>
 					<Text>{cupList.entry_at}</Text>
 				</View>
 				<View flex-5 gap-5>
 					<View flex row gap-5 center>
-						<Text>Total Cups :</Text>
+						<Text>Cups :</Text>
 						<Text text70BO color="#00A9FF">
 							{cupList.total_cups}
 						</Text>
 					</View>
 					<View flex row gap-5 center>
-						<Text>Total Amount :</Text>
+						<Text>Amount :</Text>
 						<Text text70BO color="#00A9FF">
 							{cupList.total_amount}
 						</Text>

@@ -3,10 +3,9 @@ import { Card, Chip, GridList, SegmentedControl, Text, View } from "react-native
 import CupListModal from "./CupListModal.jsx";
 import CupListCardDetails from "./CupListCardDetails.jsx";
 import OverviewCardDetails from "./OverviewCardDetails.jsx";
-import axios from "axios";
+import Axios from "../../component/AxiosBaseUrl.jsx";
 
 const HomeScreen = () => {
-	let cups = [];
 	const [cupListTotal, setCupListTotal] = useState({
 		total_cups: 0,
 		total_amount: 0,
@@ -30,14 +29,12 @@ const HomeScreen = () => {
 
 	const loadCupListTotal = (durationNumber) => {
 		data = { type: durationNumber };
-		axios({
+		Axios({
 			method: "post",
-			url: "http://192.168.1.9:8000/load-cup-list-total",
+			url: "load-cup-list-total",
 			data: data,
-			headers: {},
 		})
 			.then((response) => {
-				console.log(response.data);
 				setCupListTotal(response.data);
 			})
 			.catch(function (error) {
@@ -46,9 +43,9 @@ const HomeScreen = () => {
 	};
 
 	const loadCupList = () => {
-		axios({
+		Axios({
 			method: "get",
-			url: "http://192.168.1.9:8000/api/load-last-7-days-record",
+			url: "load-last-7-days-record",
 		})
 			.then((response) => {
 				setCupList(response.data.last_7_days);
@@ -67,7 +64,7 @@ const HomeScreen = () => {
 							<Text text50>Overview</Text>
 						</View>
 						<View flex-2 right>
-							<SegmentedControl initialIndex={0} backgroundColor="white" segmentLabelStyle={{ width: 40, textAlign: "center" }} activeColor="#5AB2FF" segments={[{ label: "Week" }, { label: "Month" }]} />
+							<SegmentedControl initialIndex={0} backgroundColor="white" onChangeIndex={loadCupListTotal} segmentLabelStyle={{ width: 40, textAlign: "center" }} activeColor="#5AB2FF" segments={[{ label: "Week" }, { label: "Month" }]} />
 						</View>
 					</View>
 					<View flex-2 row gap-10>
