@@ -10,7 +10,7 @@ const OverviewCardDetails = ({ icon, text, value, amountIcon }) => {
 					<Text>{text}</Text>
 				</View>
 				<View flex-1 center>
-					<Text text30>{amountIcon ? "₹" + value : value}</Text>
+					<Text text30>{amountIcon ? "₹" + value ?? 0 : value ?? 0}</Text>
 				</View>
 			</View>
 		</>
