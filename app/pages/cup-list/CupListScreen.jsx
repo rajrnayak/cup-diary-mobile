@@ -8,7 +8,7 @@ import Form from "./Form.jsx";
 const CupListScreen = () => {
 	const [filterDetails, setFilterDetails] = useState({
 		type: 0,
-		vendor: 1,
+		vendor: 0,
 		product: 0,
 	});
 	const [vendors, setVendors] = useState([]);
@@ -25,12 +25,13 @@ const CupListScreen = () => {
 	};
 
 	const loadVendor = async () => {
-		await AxiosBaseUrl({
+		AxiosBaseUrl({
 			method: "get",
 			url: "load-vendor",
 		})
 			.then((response) => {
-				setVendors(response.data);
+				let vendors = response.data ?? [];
+				setVendors(vendors);
 			})
 			.catch(function (error) {
 				console.log(error);
@@ -79,7 +80,7 @@ const CupListScreen = () => {
 							</Text>
 							<Picker
 								key={vendors.length}
-								// useWheelPicker
+								useWheelPicker
 								fieldStyle={{
 									borderWidth: 1,
 									borderRadius: 10,
@@ -95,10 +96,8 @@ const CupListScreen = () => {
 								placeholderTextColor="#00A9FF"
 								value={filterDetails.vendor}
 								onChange={(value) => setFilterDetails({ ...filterDetails, vendor: value })}>
-								{vendors &&
-									vendors.map((vendor, index) => {
-										return <Picker.Item key={index} value={vendor.id} label={vendor.name} />;
-									})}
+								<Picker.Item value={0} label="All" />
+								{vendors && vendors.map((vendor, index) => <Picker.Item key={index} value={vendor.id} label={vendor.name} />)}
 							</Picker>
 						</View>
 						<View flex gap-5>
@@ -152,7 +151,7 @@ const CupListScreen = () => {
 					bottom: 10,
 				}}
 			/>
-			<Form ref={formRef} />
+			<Form ref={formRef} vendors={vendors} />
 		</>
 	);
 };

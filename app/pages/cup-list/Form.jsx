@@ -1,14 +1,14 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Button, Chip, DateTimePicker, Modal, Picker, Text, TextField, View } from "react-native-ui-lib";
+import { Button, Chip, DateTimePicker, Modal, Picker, Text, TextField, Toast, View } from "react-native-ui-lib";
 import Divider from "../../component/Divider";
 import CupListCard from "./CupListCard";
 import AxiosBaseUrl from "../../component/AxiosBaseUrl";
 
-const Form = forwardRef((props, ref) => {
+const Form = forwardRef(({ vendors }, ref) => {
 	const [isVisible, setIsVisible] = useState(false);
-	const [vendors, setVendors] = useState([]);
+	const [products, setProducts] = useState([]);
 	const [fields, setFields] = useState({
 		id: null,
 		vendor_id: 0,
@@ -35,21 +35,8 @@ const Form = forwardRef((props, ref) => {
 	};
 
 	useEffect(() => {
-		loadVendor();
-	}, []);
-
-	const loadVendor = () => {
-		AxiosBaseUrl({
-			method: "get",
-			url: "load-vendor",
-		})
-			.then((response) => {
-				setVendors(response.data);
-			})
-			.catch(function (error) {
-				console.log(error);
-			});
-	};
+		setProducts([]);
+	}, [fields.vendor_id == 0]);
 
 	useImperativeHandle(
 		ref,
@@ -62,7 +49,88 @@ const Form = forwardRef((props, ref) => {
 		[]
 	);
 
-	console.log(fields);
+	const changeVendor = (id) => {
+		setFields({ ...fields, vendor_id: id });
+		getProducts(id);
+	};
+
+	const addCupList = () => {
+		let data = { ...fields };
+		data.cup_list.push({
+			id: null,
+			product_id: "",
+			price: "",
+			cups: "",
+		});
+		setFields(data);
+	};
+
+	const getProducts = (vendor_id) => {
+		vendor_id != "" &&
+			AxiosBaseUrl({
+				method: "get",
+				url: `get-products/${vendor_id}`,
+			})
+				.then(function (response) {
+					let products = response.data ?? [];
+					setProducts(products);
+				})
+				.catch(function (error) {
+					console.log(error.response.data.errors);
+				});
+	};
+
+	const deleteCupListField = (index) => {
+		let cupLists = [...fields.cup_list];
+		if (cupLists.length > 1) {
+			let changed_cup_lists = cupLists.filter((a, i) => i !== index);
+			setFields({
+				...fields,
+				cup_list: changed_cup_lists,
+			});
+		}
+	};
+
+	const changeCupListField = (index, name, value) => {
+		let cupLists = [...fields.cup_list];
+		let action = true;
+
+		cupLists.forEach((cup) => {
+			if (cup.product_id == value) {
+				action = false;
+				return;
+			}
+		});
+
+		if (action && name == "product_id") {
+			cupLists[index][name] = value;
+
+			setFields({ ...fields, cup_list: cupLists });
+			setPrice(value, index, cupLists);
+		}
+
+		if (name != "product_id") {
+			cupLists[index][name] = value;
+
+			setFields({ ...fields, cup_list: cupLists });
+		}
+	};
+
+	const setPrice = (product_id, index, cupLists) => {
+		let cupListPrice = cupLists[index]["price"];
+		let productPrice = 0;
+
+		products.forEach((product) => {
+			if (product.id == product_id) {
+				productPrice = product.price;
+			}
+		});
+
+		if (productPrice != cupListPrice) {
+			cupLists[index]["price"] = productPrice;
+			setFields({ ...fields, cup_list: cupLists });
+		}
+	};
 
 	return (
 		<Modal visible={isVisible} transparent onRequestClose={() => close()} animationType="slide">
@@ -79,8 +147,8 @@ const Form = forwardRef((props, ref) => {
 					<Divider />
 					<GestureHandlerRootView>
 						<ScrollView>
-							<View flex>
-								<View row gap-5 marginT-10 marginB-10>
+							<View flex gap-10>
+								<View row gap-5 marginT-10>
 									<Chip
 										flex-2
 										label={"Total Cups"}
@@ -110,16 +178,16 @@ const Form = forwardRef((props, ref) => {
 										}}
 									/>
 								</View>
-								<View row>
-									<View flex center>
+								<View gap-5>
+									<View flex>
 										<Text text70BO color="#00A9FF">
-											Vendor :
+											Vendor
 										</Text>
 									</View>
 									<View flex-3>
 										<Picker
 											key="formVendor"
-											// useWheelPicker
+											useWheelPicker
 											fieldStyle={{
 												borderWidth: 1,
 												borderRadius: 10,
@@ -130,16 +198,18 @@ const Form = forwardRef((props, ref) => {
 												fontSize: 18,
 											}}
 											value={fields.vendor_id}
-											onChange={(value) => setFields({ ...fields, vendor_id: value })}>
+											onChange={(value) => {
+												changeVendor(value);
+											}}>
 											<Picker.Item value={0} label="All" />
 											{vendors && vendors.map((vendor, index) => <Picker.Item key={index} value={vendor.id} label={vendor.name} />)}
 										</Picker>
 									</View>
 								</View>
-								<View row marginT-10>
-									<View flex center>
+								<View gap-5>
+									<View flex>
 										<Text text70BO color="#00A9FF">
-											Entry At :
+											Entry At
 										</Text>
 									</View>
 									<View flex-3 row gap-5>
@@ -173,10 +243,10 @@ const Form = forwardRef((props, ref) => {
 										</View>
 									</View>
 								</View>
-								<View row marginT-10>
-									<View flex center>
+								<View gap-5>
+									<View flex>
 										<Text text70BO color="#00A9FF">
-											Remark :
+											Remark
 										</Text>
 									</View>
 									<View flex-3>
@@ -188,23 +258,22 @@ const Form = forwardRef((props, ref) => {
 											}}
 											placeholder={"Enter Remark."}
 											onChangeText={(remark) => setFields({ ...fields, remark: remark })}
-											// enableErrors
-											// validate={["required", "email", (value) => value.length > 6]}
-											// validationMessage={["Field is required", "Email is invalid", "Password is too short"]}
 										/>
 									</View>
 								</View>
-								<View flex row center marginT-10>
+								<View flex row center>
 									<View flex>
 										<Text text50BO>CupList</Text>
 									</View>
 									<View>
-										<Button label={<Ionicons name="add-outline" size={20} color="white" />} backgroundColor="#00A9FF" borderRadius={10} />
+										<Button onPress={addCupList} label={<Ionicons name="add-outline" size={20} color="white" />} backgroundColor="#00A9FF" borderRadius={10} />
 									</View>
 								</View>
 								<Divider />
-								<View marginT-10>
-									<CupListCard />
+								<View>
+									{fields.cup_list.map((row, index) => {
+										return <CupListCard key={index} index={index} cup_list={row} products={products} deleteCupListField={deleteCupListField} changeCupListField={changeCupListField} />;
+									})}
 								</View>
 							</View>
 						</ScrollView>
@@ -221,3 +290,19 @@ const Form = forwardRef((props, ref) => {
 });
 
 export default Form;
+
+{
+	/* <Toast
+	renderAttachment={this.renderAboveToast}
+	visible={true}
+	position={"bottom"}
+	backgroundColor="#ff5252"
+	message="At least one Cup-List required!"
+	icon={settingsIcon}
+	onDismiss={this.dismissBottomToast}
+	autoDismiss={1000}
+	showDismiss={showDismiss}
+	action={{ label: "Undo", onPress: () => console.log("undo") }}
+	showLoader={showLoader}
+/>; */
+}
