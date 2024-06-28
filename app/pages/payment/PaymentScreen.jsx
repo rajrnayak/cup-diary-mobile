@@ -1,17 +1,22 @@
-import { Card, GridList,Picker, SegmentedControl, Text, View } from "react-native-ui-lib";
+import { Card, GridList, Picker, SegmentedControl, Text, Toast, View } from "react-native-ui-lib";
 import { useEffect, useRef, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import PaymentCardDetails from "./PaymentCardDetails";
 import Axios from "../../component/AxiosBaseUrl";
 import PaymentModal from "./PaymentModal";
+import { Button } from "react-native";
+import AxiosBaseUrl from "../../component/AxiosBaseUrl";
+import Ionicons from "@expo/vector-icons/Ionicons";
 // import { Picker } from "@react-native-picker/picker";
 
 const PaymentScreen = () => {
+
 	const [filterDetails, setFilterDetails] = useState({
 		type: 0,
 		vendor_id: 0,
 		payment_type: 2,
 	});
+	const[isToast , setIsToast] = useState(false);
 	const [paymentLits, setPaymentList] = useState([]);
 	const [vendors1, setVendors] = useState([]);
 	const modalRef = useRef(null);
@@ -66,6 +71,13 @@ const PaymentScreen = () => {
 		loadVendors();
 	}, [filterDetails]);
 
+
+	async function myfun(){
+		setIsToast(true);
+		await new Promise(resolve => setTimeout(resolve, 1000));
+        setIsToast(false);
+	}
+
 	return (
 		<>
 			<GestureHandlerRootView>
@@ -89,16 +101,27 @@ const PaymentScreen = () => {
 								Vendor
 							</Text>
 							<Picker
-							useSafeArea
-								style={{ backgroundColor: '#c9cdd49c', marginBottom: 20 }}
-								// mode="dropdown"
-								// selectedValue={value} //route.params.firstName ??
-								// onValueChange={onChange}
-								// onBlur={onBlur}
-
-							>
+								useWheelPicker
+								key={vendors1.length}
+								fieldStyle={{
+									borderWidth: 1,
+									borderRadius: 10,
+									borderColor: "#00A9FF",
+									backgroundColor: "white",
+									padding: 10,
+								}}
+								style={{
+									textAlign: "center",
+									fontSize: 18,
+									color: "#00A9FF",
+								}}
+								placeholderTextColor="#00A9FF"
+								value={filterDetails.vendor_id}
+								placeholder={"Vendors"}
+								onChange={(value) => setFilterDetails({ ...filterDetails, vendor_id: value })}>
+								<Picker.Item value={0} label="All" />
 								{vendors1 && vendors1.map((vendor, index) => (
-									<Picker.Item label={vendor.name} value={vendor.id} key={index} />
+									<Picker.Item key={index} value={vendor.id} label={vendor.name} />
 								))}
 							</Picker>
 						</View>
@@ -106,7 +129,7 @@ const PaymentScreen = () => {
 							<Text text60BO center>
 								Type
 							</Text>
-							{/* <Picker
+							<Picker
 								useWheelPicker
 								fieldStyle={{
 									borderWidth: 1,
@@ -128,15 +151,24 @@ const PaymentScreen = () => {
 								{types.map((type, index) => (
 									<Picker.Item key={index} value={type.id} label={type.name} />
 								))}
-							</Picker> */}
+							</Picker>
 						</View>
 					</View>
 					<View flex-10 >
-						<View>
-							{vendors1 && vendors1.map((vendor, index) => (
-								<Text key={index}>{vendor.id}</Text>
-							))}
-						</View>
+						<Button title="hello" onPress={myfun}/>
+						<Toast
+							// renderAttachment={this.renderAboveToast}
+							visible={isToast}
+							position={'bottom'}
+							backgroundColor='red'
+							message="Toast with one line of text"
+							// icon={<Ionicons name="create" size={20} color="white" />}
+							// onDismiss={this.dismissBottomToast}
+							
+							// showDismiss={showDismiss}
+							action={{ label: 'Undo', onPress: () => console.log('undo') }}
+							// showLoader={showLoader}
+						/>
 						{/* <GridList
 							listPadding={5}
 							data={paymentLits}

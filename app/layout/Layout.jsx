@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { authUser } from "../manage-state/auth-state/userAuthSlice.js";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const Layout = () => {
 	const Stack = createNativeStackNavigator();
