@@ -6,28 +6,31 @@ import Divider from "../../component/Divider";
 import CupListCard from "./CupListCard";
 import AxiosBaseUrl from "../../component/AxiosBaseUrl";
 
+const defaultField = {
+	id: null,
+	vendor_id: "",
+	entry_at: "",
+	total_cups: 3,
+	total_amount: 30,
+	remark: "",
+	user_id: 1,
+	cup_list: [
+		{
+			id: null,
+			product_id: "",
+			price: "",
+			cups: "",
+		},
+	],
+};
+
 const Form = forwardRef(({ vendors }, ref) => {
 	const [isVisible, setIsVisible] = useState({
 		modalOpen: false,
 		toastOpen: false,
 	});
 	const [products, setProducts] = useState([]);
-	const [fields, setFields] = useState({
-		id: null,
-		vendor_id: 0,
-		entry_at: "",
-		total_cups: "",
-		total_amount: "",
-		remark: "",
-		cup_list: [
-			{
-				id: null,
-				product_id: "",
-				price: "",
-				cups: "",
-			},
-		],
-	});
+	const [fields, setFields] = useState(defaultField);
 
 	const open = () => {
 		setIsVisible({ ...isVisible, modalOpen: true });
@@ -35,6 +38,7 @@ const Form = forwardRef(({ vendors }, ref) => {
 
 	const close = () => {
 		setIsVisible({ ...isVisible, modalOpen: false });
+		setFields(defaultField);
 	};
 
 	useEffect(() => {
@@ -58,14 +62,16 @@ const Form = forwardRef(({ vendors }, ref) => {
 	};
 
 	const addCupList = () => {
-		let data = { ...fields };
-		data.cup_list.push({
-			id: null,
-			product_id: "",
-			price: "",
-			cups: "",
-		});
-		setFields(data);
+		if (products.length > fields.cup_list.length) {
+			let data = { ...fields };
+			data.cup_list.push({
+				id: null,
+				product_id: "",
+				price: "",
+				cups: "",
+			});
+			setFields(data);
+		}
 	};
 
 	const getProducts = (vendor_id) => {
@@ -113,7 +119,7 @@ const Form = forwardRef(({ vendors }, ref) => {
 			cupLists[index][name] = value;
 
 			setFields({ ...fields, cup_list: cupLists });
-			setPrice(value, index, cupLists);
+			// setPrice(value, index, cupLists);
 		}
 
 		if (name != "product_id") {
@@ -138,6 +144,21 @@ const Form = forwardRef(({ vendors }, ref) => {
 			setFields({ ...fields, cup_list: cupLists });
 		}
 	};
+
+	function handleSubmit(data) {
+		AxiosBaseUrl({
+			method: "post",
+			url: `/store-or-update`,
+			data: data,
+		})
+			.then((response) => {
+				console.log(response.data);
+				close();
+			})
+			.catch(function (error) {
+				console.log(error.response.data);
+			});
+	}
 
 	return (
 		<Modal visible={isVisible.modalOpen} transparent onRequestClose={() => close()} animationType="slide">
@@ -294,7 +315,7 @@ const Form = forwardRef(({ vendors }, ref) => {
 					</GestureHandlerRootView>
 					<View>
 						<View right marginT-10>
-							<Button label="Submit" backgroundColor="#0d6efd" onPress={() => console.log("Submitted")} borderRadius={10} />
+							<Button label="Submit" backgroundColor="#0d6efd" onPress={() => handleSubmit(fields)} borderRadius={10} />
 						</View>
 					</View>
 				</View>

@@ -1,10 +1,11 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
 import { useEffect, useRef, useState } from "react";
-import { Button, Card, GridList, Picker, SegmentedControl, Text, View } from "react-native-ui-lib";
+import { Button, Card, Drawer, GridList, Picker, SegmentedControl, Text, View } from "react-native-ui-lib";
 import AxiosBaseUrl from "../../component/AxiosBaseUrl";
 import Form from "./Form.jsx";
-// import CupListCardDetails from '../home/CupListCardDetails.jsx'
+import CupListDetails from "./CupListDetails.jsx";
+import CupListDetailModal from "./CupListDetailModal.jsx";
 
 const CupListScreen = () => {
 	const [filterDetails, setFilterDetails] = useState({
@@ -16,6 +17,7 @@ const CupListScreen = () => {
 	const [products, setProducts] = useState([]);
 	const [cupList, setCupList] = useState([]);
 	const formRef = useRef(null);
+	const detailModal = useRef(null);
 
 	useEffect(() => {
 		loadData();
@@ -31,9 +33,13 @@ const CupListScreen = () => {
 		}
 	}, [filterDetails.vendor]);
 
+	useEffect(() => {
+		loadList(filterDetails.type, filterDetails.vendor, filterDetails.product);
+	}, [filterDetails]);
+
 	const loadData = async () => {
 		await loadVendor();
-		await loadList(0, filterDetails.vendor, filterDetails.product);
+		await loadList(filterDetails.type, filterDetails.vendor, filterDetails.product);
 	};
 
 	const loadVendor = async () => {
@@ -50,10 +56,11 @@ const CupListScreen = () => {
 			});
 	};
 
-	const loadList = (type, vendor) => {
+	const loadList = (type, vendor, product) => {
 		data = {
 			type: type,
-			vendor_id: vendor,
+			vendor: vendor,
+			product: product,
 		};
 
 		AxiosBaseUrl({
@@ -62,7 +69,7 @@ const CupListScreen = () => {
 			data: data,
 		})
 			.then((response) => {
-				console.log(response.data.cup_list);
+				// console.log(response.data.cup_list);
 				setCupList(response.data.cup_list);
 			})
 			.catch(function (error) {
@@ -89,6 +96,10 @@ const CupListScreen = () => {
 		formRef.current.open();
 	};
 
+	const openModal = (cupList) => {
+		detailModal.current.open(cupList);
+	};
+
 	return (
 		<>
 			<GestureHandlerRootView>
@@ -98,7 +109,7 @@ const CupListScreen = () => {
 							<Text text50BO>Orders List</Text>
 						</View>
 						<View flex-2>
-							<SegmentedControl backgroundColor="white" activeColor="#5AB2FF" onChangeIndex={loadList} segmentLabelStyle={{ width: 40, textAlign: "center" }} segments={[{ label: "All" }, { label: "Month" }, { label: "Year" }]} />
+							<SegmentedControl backgroundColor="white" activeColor="#5AB2FF" onChangeIndex={(type) => setFilterDetails({ ...filterDetails, type: type })} segmentLabelStyle={{ width: 40, textAlign: "center" }} segments={[{ label: "All" }, { label: "Month" }, { label: "Year" }]} />
 						</View>
 					</View>
 					<View flex-2 center row marginR-10 marginL-10 gap-10>
@@ -160,17 +171,19 @@ const CupListScreen = () => {
 						</View>
 					</View>
 					<View flex-10>
-						{/* <GridList
+						<GridList
 							listPadding={5}
 							data={cupList}
 							numColumns={1}
 							itemSpacing={2}
 							renderItem={({ item }) => (
-								<Card backgroundColor="white" padding-6 paddingL-10 paddingR-10 margin-4>
-									<CupListCardDetails cupList={item} />
-								</Card>
+								<Drawer rightItems={[{ text: "Delete", background: "red", onPress: () => console.log("delete pressed") }]} leftItem={{ text: "Update", background: "blue", onPress: () => console.log("Update pressed") }}>
+									<Card backgroundColor="white" padding-6 paddingL-10 paddingR-10 margin-4 onPress={() => openModal(item)}>
+										<CupListDetails cupList={item} />
+									</Card>
+								</Drawer>
 							)}
-						/> */}
+						/>
 					</View>
 				</View>
 			</GestureHandlerRootView>
@@ -185,6 +198,7 @@ const CupListScreen = () => {
 				}}
 			/>
 			<Form ref={formRef} vendors={vendors} />
+			<CupListDetailModal ref={detailModal} />
 		</>
 	);
 };
