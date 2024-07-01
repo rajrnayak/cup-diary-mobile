@@ -9,7 +9,7 @@ import Form from "./Form.jsx";
 const CupListScreen = () => {
 	const [filterDetails, setFilterDetails] = useState({
 		type: 0,
-		vendor: 1,
+		vendor: 0,
 		product: 0,
 	});
 	const [vendors, setVendors] = useState([]);
@@ -20,20 +20,20 @@ const CupListScreen = () => {
 	useEffect(() => {
 		loadData();
 	}, []);
-	
+
 	useEffect(() => {
 		if (filterDetails.vendor != 0) {
 			getProducts(filterDetails.vendor);
-			setFilterDetails({...filterDetails,product:0});
-		}else{
+			setFilterDetails({ ...filterDetails, product: 0 });
+		} else {
 			setProducts([]);
-			setFilterDetails({...filterDetails,product:''});
+			setFilterDetails({ ...filterDetails, product: "" });
 		}
 	}, [filterDetails.vendor]);
 
 	const loadData = async () => {
 		await loadVendor();
-		loadList(0, filterDetails.vendor,filterDetails.product);
+		await loadList(0, filterDetails.vendor, filterDetails.product);
 	};
 
 	const loadVendor = async () => {
@@ -42,7 +42,7 @@ const CupListScreen = () => {
 			url: "load-vendor",
 		})
 			.then((response) => {
-				let vendors = response.data ?? [];
+				let vendors = response.data;
 				setVendors(vendors);
 			})
 			.catch(function (error) {
@@ -50,10 +50,9 @@ const CupListScreen = () => {
 			});
 	};
 
-	const loadList = (type, vendor,product) => {
+	const loadList = (type, vendor) => {
 		data = {
 			type: type,
-			vendor_id: vendor,
 			vendor_id: vendor,
 		};
 
@@ -134,27 +133,29 @@ const CupListScreen = () => {
 								Product
 							</Text>
 							<Picker
-							editable={filterDetails.vendor > 0 ? true : false}
-							key={products.length}
+								editable={filterDetails.vendor > 0 ? true : false}
+								key={products.length}
 								useWheelPicker
 								fieldStyle={{
 									borderWidth: 1,
 									borderRadius: 10,
-									borderColor: filterDetails.vendor > 0 ?'#00A9FF':"gray",
+									borderColor: filterDetails.vendor > 0 ? "#00A9FF" : "gray",
 									backgroundColor: "white",
 									padding: 10,
 								}}
 								style={{
 									textAlign: "center",
 									fontSize: 18,
-									color: filterDetails.vendor > 0 ?'#00A9FF':"gray",
+									color: filterDetails.vendor > 0 ? "#00A9FF" : "gray",
 								}}
-								placeholderTextColor= {filterDetails.vendor > 0 ?'#00A9FF':"gray"}
+								placeholderTextColor={filterDetails.vendor > 0 ? "#00A9FF" : "gray"}
 								value={filterDetails.product}
 								placeholder={"Products"}
 								onChange={(value) => setFilterDetails({ ...filterDetails, product: value })}>
 								<Picker.Item value={0} label="All" />
-								{products.map((product, index) => <Picker.Item key={index} value={product.id} label={product.name} />)}
+								{products.map((product, index) => (
+									<Picker.Item key={index} value={product.id} label={product.name} />
+								))}
 							</Picker>
 						</View>
 					</View>

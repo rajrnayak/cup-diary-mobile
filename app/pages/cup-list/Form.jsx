@@ -7,7 +7,10 @@ import CupListCard from "./CupListCard";
 import AxiosBaseUrl from "../../component/AxiosBaseUrl";
 
 const Form = forwardRef(({ vendors }, ref) => {
-	const [isVisible, setIsVisible] = useState(false);
+	const [isVisible, setIsVisible] = useState({
+		modalOpen: false,
+		toastOpen: false,
+	});
 	const [products, setProducts] = useState([]);
 	const [fields, setFields] = useState({
 		id: null,
@@ -27,11 +30,11 @@ const Form = forwardRef(({ vendors }, ref) => {
 	});
 
 	const open = () => {
-		setIsVisible(true);
+		setIsVisible({ ...isVisible, modalOpen: true });
 	};
 
 	const close = () => {
-		setIsVisible(false);
+		setIsVisible({ ...isVisible, modalOpen: false });
 	};
 
 	useEffect(() => {
@@ -72,7 +75,7 @@ const Form = forwardRef(({ vendors }, ref) => {
 				url: `get-products/${vendor_id}`,
 			})
 				.then(function (response) {
-					let products = response.data ?? [];
+					let products = response.data;
 					setProducts(products);
 				})
 				.catch(function (error) {
@@ -80,7 +83,7 @@ const Form = forwardRef(({ vendors }, ref) => {
 				});
 	};
 
-	const deleteCupListField = (index) => {
+	const deleteCupListField = async (index) => {
 		let cupLists = [...fields.cup_list];
 		if (cupLists.length > 1) {
 			let changed_cup_lists = cupLists.filter((a, i) => i !== index);
@@ -88,6 +91,10 @@ const Form = forwardRef(({ vendors }, ref) => {
 				...fields,
 				cup_list: changed_cup_lists,
 			});
+		} else {
+			setIsVisible({ ...isVisible, toastOpen: true });
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+			setIsVisible({ ...isVisible, toastOpen: false });
 		}
 	};
 
@@ -133,7 +140,7 @@ const Form = forwardRef(({ vendors }, ref) => {
 	};
 
 	return (
-		<Modal visible={isVisible} transparent onRequestClose={() => close()} animationType="slide">
+		<Modal visible={isVisible.modalOpen} transparent onRequestClose={() => close()} animationType="slide">
 			<View flex backgroundColor="white" padding-10>
 				<View flex>
 					<View paddingB-7 row center>
@@ -197,11 +204,12 @@ const Form = forwardRef(({ vendors }, ref) => {
 												textAlign: "center",
 												fontSize: 18,
 											}}
+											placeholder="Vendors"
 											value={fields.vendor_id}
 											onChange={(value) => {
 												changeVendor(value);
 											}}>
-											<Picker.Item value={0} label="All" />
+											<Picker.Item value={0} label="Select Vendor." />
 											{vendors && vendors.map((vendor, index) => <Picker.Item key={index} value={vendor.id} label={vendor.name} />)}
 										</Picker>
 									</View>
@@ -271,9 +279,15 @@ const Form = forwardRef(({ vendors }, ref) => {
 								</View>
 								<Divider />
 								<View>
+									{
+										// form start
+									}
 									{fields.cup_list.map((row, index) => {
 										return <CupListCard key={index} index={index} cup_list={row} products={products} deleteCupListField={deleteCupListField} changeCupListField={changeCupListField} />;
 									})}
+									{
+										// form end
+									}
 								</View>
 							</View>
 						</ScrollView>
@@ -285,24 +299,9 @@ const Form = forwardRef(({ vendors }, ref) => {
 					</View>
 				</View>
 			</View>
+			<Toast visible={isVisible.toastOpen} position={"bottom"} backgroundColor="#ff5252" message="At least one Cup-List required!" />
 		</Modal>
 	);
 });
 
 export default Form;
-
-{
-	/* <Toast
-	renderAttachment={this.renderAboveToast}
-	visible={true}
-	position={"bottom"}
-	backgroundColor="#ff5252"
-	message="At least one Cup-List required!"
-	icon={settingsIcon}
-	onDismiss={this.dismissBottomToast}
-	autoDismiss={1000}
-	showDismiss={showDismiss}
-	action={{ label: "Undo", onPress: () => console.log("undo") }}
-	showLoader={showLoader}
-/>; */
-}

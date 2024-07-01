@@ -38,7 +38,7 @@ const CupListCard = ({ index, cup_list, products, deleteCupListField, changeCupL
 					<View flex row center>
 						<View flex>
 							<Picker
-								key={`productPiker${index}`}
+								key={"productPiker" + index + products.length}
 								useWheelPicker
 								fieldStyle={{
 									borderWidth: 1,
@@ -50,12 +50,12 @@ const CupListCard = ({ index, cup_list, products, deleteCupListField, changeCupL
 									fontSize: 15,
 								}}
 								placeholder={"Products"}
-								// value={fields.vendor_id}
-								// onChange={(value) => {
-								// 	changeVendor(value);
-							>
-								<Picker.Item value={0} label="All" />
-								{products && products.map((product, index) => <Picker.Item key={index} value={product.id} label={product.name} />)}
+								value={cup_list.product_id}
+								onChange={(value) => changeCupListField(index, "product_id", value)}>
+								<Picker.Item key={index} value={0} label="Select Product." />
+								{products.map((product, key) => (
+									<Picker.Item key={key} value={product.id} label={product.name} />
+								))}
 							</Picker>
 						</View>
 					</View>
@@ -74,13 +74,15 @@ const CupListCard = ({ index, cup_list, products, deleteCupListField, changeCupL
 										justifyContent: "center",
 									}}
 									placeholder={"price"}
-									onChangeText={() => {}}
+									value={cup_list.price}
+									onChangeText={(price) => changeCupListField(index, "price", price)}
 								/>
 							</View>
 						</View>
 						<View flex row center>
 							<View flex>
 								<TextField
+									key={"cups" + index + products.length}
 									style={{
 										textAlign: "center",
 									}}
@@ -92,7 +94,8 @@ const CupListCard = ({ index, cup_list, products, deleteCupListField, changeCupL
 										justifyContent: "center",
 									}}
 									placeholder={"Cups"}
-									onChangeText={() => {}}
+									value={cup_list.cups}
+									onChangeText={(cups) => changeCupListField(index, "cups", cups)}
 								/>
 							</View>
 						</View>
