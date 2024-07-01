@@ -9,7 +9,7 @@ const PaymentCardDetails = ({ payment }) => {
 					<Text text50BO color="#00A9FF">
 						{payment.vendors.name}
 					</Text>
-					<Text>{payment.payment_at}</Text>
+					<Text>{payment.display_payment_at}</Text>
 				</View>
 				<View flex-5 gap-5>
 					<View flex row gap-5 center>

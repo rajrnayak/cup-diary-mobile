@@ -1,4 +1,4 @@
-import { Card, GridList, Button, Picker, SegmentedControl, Text, Toast, View } from "react-native-ui-lib";
+import { Card, GridList, Button, Picker, SegmentedControl, Text, Toast, View, Drawer } from "react-native-ui-lib";
 import { useEffect, useRef, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import PaymentCardDetails from "./PaymentCardDetails";
@@ -20,30 +20,27 @@ const PaymentScreen = () => {
 	const [paymentLits, setPaymentList] = useState([]);
 	const [vendors, setVendors] = useState([]);
 	const modalRef = useRef(null);
-	// let vendors = [];
-	// // let vendors = [
-	// 	{ id: 1, name: "AnkitTea" },
-	// 	{ id: 2, name: "BabuLal" },
-	// 	{ id: 3, name: "ChiragTea" },
-	// ];
-
+	const formRef = useRef(null);
+	
 	let types = [
 		{ id: 0, name: 'credit' },
 		{ id: 1, name: 'debit' },
 	];
 
-	const formRef = useRef(null);
 
-    const openForm = () =>{
-        formRef.current.open();   
-    }
+	const openForm = (payment) => {
+		if (payment.id) {
+			payment.payment_at = new Date(payment.payment_at);
+		}
+		formRef.current.open(payment);
+	}
 
 	const openModal = (payment) => {
 		modalRef.current.open(payment);
 	};
 
 
-	function loadData(filterDetails) {
+	function loadData() {
 		Axios({
 			method: 'post',
 			url: 'load-payments',
@@ -56,6 +53,18 @@ const PaymentScreen = () => {
 			.catch(function (error) {
 				console.log(error);
 			});
+	}
+
+	function destroy(id){
+		Axios({
+			method:'get',
+			url:`payment/destroy/${id}`,
+		}).then((response)=>{
+			console.log(response.data);
+			loadData();
+		}).catch((error)=>{
+			console.log(error.response.data);
+		})
 	}
 
 	async function loadVendors() {
@@ -73,16 +82,16 @@ const PaymentScreen = () => {
 	}
 
 	useEffect(() => {
-		loadData(filterDetails);
+		loadData();
 		loadVendors();
 	}, [filterDetails]);
 
 
-	async function myfun() {
-		setIsToast(true);
-		await new Promise(resolve => setTimeout(resolve, 1000));
-		setIsToast(false);
-	}
+	// async function myfun() {
+	// 	setIsToast(true);
+	// 	await new Promise(resolve => setTimeout(resolve, 1000));
+	// 	setIsToast(false);
+	// }
 
 	return (
 		<>
@@ -167,9 +176,14 @@ const PaymentScreen = () => {
 							numColumns={1}
 							itemSpacing={2}
 							renderItem={({ item }) => (
-								<Card backgroundColor="white" padding-6 paddingL-10 paddingR-10 margin-4 onPress={() => openModal(item)}>
-									<PaymentCardDetails payment={item} />
-								</Card>
+								<Drawer
+									rightItems={[{ text: 'Delete', background: 'red', onPress: () => {destroy(item.id)} }]}
+									leftItem={{ text: 'Edit', background: 'blue', onPress: () => { openForm(item) } }}
+								>
+									<Card backgroundColor="white" padding-6 paddingL-10 paddingR-10 margin-4 onPress={() => openModal(item)}>
+										<PaymentCardDetails payment={item} />
+									</Card>
+								</Drawer>
 							)}
 						/>
 					</View>
@@ -185,7 +199,7 @@ const PaymentScreen = () => {
 				label={<Ionicons name="create" size={20} color="white" />}
 				backgroundColor="#00A9FF"
 			/>
-			<Form ref={formRef} vendors={vendors}/>
+			<Form ref={formRef} vendors={vendors} types={types} loadData={loadData}/>
 			<PaymentModal ref={modalRef} />
 		</>
 	);
