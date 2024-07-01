@@ -98,11 +98,25 @@ const CupListScreen = () => {
 			url: `cup-list/edit-cup-list/${id}`,
 		})
 			.then(function (response) {
-				// console.log(response.data);
-				openFormModal(response.data);
+				let cupList = response.data;
+				cupList.entry_at = new Date(cupList.entry_at);
+				openFormModal(cupList);
 			})
 			.catch(function (error) {
 				console.log(error.response.data.errors);
+			});
+	};
+
+	const destroyCupList = (id) => {
+		AxiosBaseUrl({
+			method: "get",
+			url: `/destroy/${id}`,
+		})
+			.then(function (response) {
+				console.log(response.data);
+			})
+			.catch(function (error) {
+				console.log(error.response.data);
 			});
 	};
 
@@ -191,7 +205,7 @@ const CupListScreen = () => {
 							numColumns={1}
 							itemSpacing={2}
 							renderItem={({ item }) => (
-								<Drawer rightItems={[{ text: "Delete", background: "red", onPress: () => console.log("delete pressed") }]} leftItem={{ text: "Update", background: "blue", onPress: () => editCupList(item.id) }}>
+								<Drawer rightItems={[{ text: "Delete", background: "red", onPress: () => destroyCupList(item.id) }]} leftItem={{ text: "Update", background: "blue", onPress: () => editCupList(item.id) }}>
 									<Card backgroundColor="white" padding-6 paddingL-10 paddingR-10 margin-4 onPress={() => openModal(item)}>
 										<CupListDetails cupList={item} />
 									</Card>

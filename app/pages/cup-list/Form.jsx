@@ -10,8 +10,8 @@ const defaultField = {
 	id: null,
 	vendor_id: "",
 	entry_at: "",
-	total_cups: 3,
-	total_amount: 30,
+	total_cups: "",
+	total_amount: "",
 	remark: "",
 	user_id: 1,
 	cup_list: [
@@ -24,7 +24,7 @@ const defaultField = {
 	],
 };
 
-const Form = forwardRef(({ vendors }, ref) => {
+const Form = forwardRef(({ vendors, navigation }, ref) => {
 	const [isVisible, setIsVisible] = useState({
 		modalOpen: false,
 		toastOpen: false,
@@ -32,12 +32,14 @@ const Form = forwardRef(({ vendors }, ref) => {
 	const [products, setProducts] = useState([]);
 	const [fields, setFields] = useState(defaultField);
 
+	// console.log(fields);
+
 	const open = (cupList) => {
-		console.log(cupList);
-		// if (cupList) {
-		// 	cupList.entry_at = Date(cupList.entry_at).format("YYYY-MM-DD HH:mm");
-		// 	setFields(cupList);
-		// }
+		if (cupList) {
+			// console.log(cupList);
+			setFields(cupList);
+			getProducts(cupList.vendor_id);
+		}
 		setIsVisible({ ...isVisible, modalOpen: true });
 	};
 
@@ -45,6 +47,24 @@ const Form = forwardRef(({ vendors }, ref) => {
 		setIsVisible({ ...isVisible, modalOpen: false });
 		setFields(defaultField);
 	};
+
+	useEffect(() => {
+		if (fields.cup_list[0].price != "") {
+			let cups = 0;
+			let amount = 0;
+
+			fields.cup_list.forEach((cup_list, index) => {
+				cups += Number(cup_list.cups);
+				amount += cup_list.price * cup_list.cups;
+			});
+
+			setFields({
+				...fields,
+				total_amount: amount,
+				total_cups: cups,
+			});
+		}
+	}, [fields.cup_list]);
 
 	useEffect(() => {
 		setProducts([]);
@@ -124,7 +144,7 @@ const Form = forwardRef(({ vendors }, ref) => {
 			cupLists[index][name] = value;
 
 			setFields({ ...fields, cup_list: cupLists });
-			// setPrice(value, index, cupLists);
+			setPrice(value, index, cupLists);
 		}
 
 		if (name != "product_id") {
@@ -151,9 +171,12 @@ const Form = forwardRef(({ vendors }, ref) => {
 	};
 
 	function handleSubmit(data) {
+		let url = "";
+		data.id ? (url = `/store-or-update/${data.id}`) : (url = "/store-or-update");
+
 		AxiosBaseUrl({
 			method: "post",
-			url: `/store-or-update`,
+			url: url,
 			data: data,
 		})
 			.then((response) => {
@@ -189,7 +212,7 @@ const Form = forwardRef(({ vendors }, ref) => {
 										onPress={() => console.log("pressed")}
 										labelStyle={{ fontSize: 15 }}
 										badgeProps={{
-											label: "40",
+											label: `${fields.total_cups != "" ? fields.total_cups : "0"}`,
 											labelStyle: {
 												fontSize: 15,
 											},
@@ -203,7 +226,7 @@ const Form = forwardRef(({ vendors }, ref) => {
 										onPress={() => console.log("pressed")}
 										labelStyle={{ fontSize: 15 }}
 										badgeProps={{
-											label: "100",
+											label: `${fields.total_amount != "" ? fields.total_amount : "0"}`,
 											labelStyle: {
 												fontSize: 15,
 											},
@@ -290,6 +313,7 @@ const Form = forwardRef(({ vendors }, ref) => {
 												borderWidth: 1,
 												borderRadius: 10,
 											}}
+											value={fields.remark}
 											placeholder={"Enter Remark."}
 											onChangeText={(remark) => setFields({ ...fields, remark: remark })}
 										/>

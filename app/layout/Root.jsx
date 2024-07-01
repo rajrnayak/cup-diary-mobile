@@ -55,6 +55,7 @@ const Root = () => {
 					component={HomeScreen}
 					options={{
 						title: "Home",
+						unmountOnBlur: true,
 						headerRight: () => <Pressable onPress={logout}>{({ pressed }) => <Ionicons name="log-out" color={pressed ? "#6dc5d1" : "white"} size={40} />}</Pressable>,
 					}}
 				/>
@@ -63,6 +64,7 @@ const Root = () => {
 					component={CupListScreen}
 					options={{
 						title: "Cup-List",
+						unmountOnBlur: true,
 					}}
 				/>
 				<Tab.Screen
@@ -70,6 +72,7 @@ const Root = () => {
 					component={PaymentScreen}
 					options={{
 						title: "Payment",
+						unmountOnBlur: true,
 					}}
 				/>
 				<Tab.Screen
