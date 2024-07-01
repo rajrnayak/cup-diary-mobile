@@ -39,7 +39,7 @@ const CupListScreen = () => {
 
 	const loadData = async () => {
 		await loadVendor();
-		await loadList(filterDetails.type, filterDetails.vendor, filterDetails.product);
+		await loadList();
 	};
 
 	const loadVendor = async () => {
@@ -56,7 +56,7 @@ const CupListScreen = () => {
 			});
 	};
 
-	const loadList = (type, vendor, product) => {
+	const loadList = (type = filterDetails.type, vendor = filterDetails.vendor, product = filterDetails.product) => {
 		data = {
 			type: type,
 			vendor: vendor,
@@ -114,6 +114,7 @@ const CupListScreen = () => {
 		})
 			.then(function (response) {
 				console.log(response.data);
+				loadList();
 			})
 			.catch(function (error) {
 				console.log(error.response.data);
@@ -137,7 +138,14 @@ const CupListScreen = () => {
 							<Text text50BO>Orders List</Text>
 						</View>
 						<View flex-2>
-							<SegmentedControl backgroundColor="white" activeColor="#5AB2FF" onChangeIndex={(type) => setFilterDetails({ ...filterDetails, type: type })} segmentLabelStyle={{ width: 40, textAlign: "center" }} segments={[{ label: "All" }, { label: "Month" }, { label: "Year" }]} />
+							<SegmentedControl
+								initialIndex={filterDetails.type}
+								backgroundColor="white"
+								activeColor="#5AB2FF"
+								onChangeIndex={(type) => setFilterDetails({ ...filterDetails, type: type })}
+								segmentLabelStyle={{ width: 40, textAlign: "center" }}
+								segments={[{ label: "All" }, { label: "Month" }, { label: "Year" }]}
+							/>
 						</View>
 					</View>
 					<View flex-2 center row marginR-10 marginL-10 gap-10>
@@ -225,7 +233,7 @@ const CupListScreen = () => {
 					bottom: 10,
 				}}
 			/>
-			<Form ref={formRef} vendors={vendors} />
+			<Form ref={formRef} vendors={vendors} loadList={loadList} />
 			<CupListDetailModal ref={detailModal} />
 		</>
 	);

@@ -24,7 +24,7 @@ const defaultField = {
 	],
 };
 
-const Form = forwardRef(({ vendors, navigation }, ref) => {
+const Form = forwardRef(({ vendors, loadList }, ref) => {
 	const [isVisible, setIsVisible] = useState({
 		modalOpen: false,
 		toastOpen: false,
@@ -32,11 +32,8 @@ const Form = forwardRef(({ vendors, navigation }, ref) => {
 	const [products, setProducts] = useState([]);
 	const [fields, setFields] = useState(defaultField);
 
-	// console.log(fields);
-
 	const open = (cupList) => {
 		if (cupList) {
-			// console.log(cupList);
 			setFields(cupList);
 			getProducts(cupList.vendor_id);
 		}
@@ -182,9 +179,10 @@ const Form = forwardRef(({ vendors, navigation }, ref) => {
 			.then((response) => {
 				console.log(response.data);
 				close();
+				loadList();
 			})
 			.catch(function (error) {
-				console.log(error.response.data);
+				console.log(error.response.data.errors);
 			});
 	}
 
