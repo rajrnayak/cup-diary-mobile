@@ -1,12 +1,12 @@
-import { Card, GridList, Picker, SegmentedControl, Text, Toast, View } from "react-native-ui-lib";
+import { Card, GridList, Button, Picker, SegmentedControl, Text, Toast, View } from "react-native-ui-lib";
 import { useEffect, useRef, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import PaymentCardDetails from "./PaymentCardDetails";
 import Axios from "../../component/AxiosBaseUrl";
 import PaymentModal from "./PaymentModal";
-import { Button } from "react-native";
 import AxiosBaseUrl from "../../component/AxiosBaseUrl";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Form from './Form';
 // import { Picker } from "@react-native-picker/picker";
 
 const PaymentScreen = () => {
@@ -16,12 +16,12 @@ const PaymentScreen = () => {
 		vendor_id: 0,
 		payment_type: 2,
 	});
-	const[isToast , setIsToast] = useState(false);
+	const [isToast, setIsToast] = useState(false);
 	const [paymentLits, setPaymentList] = useState([]);
-	const [vendors1, setVendors] = useState([]);
+	const [vendors, setVendors] = useState([]);
 	const modalRef = useRef(null);
-	let vendors = [];
-	// let vendors = [
+	// let vendors = [];
+	// // let vendors = [
 	// 	{ id: 1, name: "AnkitTea" },
 	// 	{ id: 2, name: "BabuLal" },
 	// 	{ id: 3, name: "ChiragTea" },
@@ -31,6 +31,12 @@ const PaymentScreen = () => {
 		{ id: 0, name: 'credit' },
 		{ id: 1, name: 'debit' },
 	];
+
+	const formRef = useRef(null);
+
+    const openForm = () =>{
+        formRef.current.open();   
+    }
 
 	const openModal = (payment) => {
 		modalRef.current.open(payment);
@@ -72,10 +78,10 @@ const PaymentScreen = () => {
 	}, [filterDetails]);
 
 
-	async function myfun(){
+	async function myfun() {
 		setIsToast(true);
 		await new Promise(resolve => setTimeout(resolve, 1000));
-        setIsToast(false);
+		setIsToast(false);
 	}
 
 	return (
@@ -102,7 +108,7 @@ const PaymentScreen = () => {
 							</Text>
 							<Picker
 								useWheelPicker
-								key={vendors1.length}
+								key={vendors.length}
 								fieldStyle={{
 									borderWidth: 1,
 									borderRadius: 10,
@@ -120,7 +126,7 @@ const PaymentScreen = () => {
 								placeholder={"Vendors"}
 								onChange={(value) => setFilterDetails({ ...filterDetails, vendor_id: value })}>
 								<Picker.Item value={0} label="All" />
-								{vendors1 && vendors1.map((vendor, index) => (
+								{vendors && vendors.map((vendor, index) => (
 									<Picker.Item key={index} value={vendor.id} label={vendor.name} />
 								))}
 							</Picker>
@@ -155,21 +161,7 @@ const PaymentScreen = () => {
 						</View>
 					</View>
 					<View flex-10 >
-						<Button title="hello" onPress={myfun}/>
-						<Toast
-							// renderAttachment={this.renderAboveToast}
-							visible={isToast}
-							position={'bottom'}
-							backgroundColor='red'
-							message="Toast with one line of text"
-							// icon={<Ionicons name="create" size={20} color="white" />}
-							// onDismiss={this.dismissBottomToast}
-							
-							// showDismiss={showDismiss}
-							action={{ label: 'Undo', onPress: () => console.log('undo') }}
-							// showLoader={showLoader}
-						/>
-						{/* <GridList
+						<GridList
 							listPadding={5}
 							data={paymentLits}
 							numColumns={1}
@@ -179,10 +171,21 @@ const PaymentScreen = () => {
 									<PaymentCardDetails payment={item} />
 								</Card>
 							)}
-						/> */}
+						/>
 					</View>
 				</View>
 			</GestureHandlerRootView>
+			<Button
+				style={{
+					bottom: 10,
+					right: 10,
+					position: 'absolute'
+				}}
+				onPress={openForm}
+				label={<Ionicons name="create" size={20} color="white" />}
+				backgroundColor="#00A9FF"
+			/>
+			<Form ref={formRef} vendors={vendors}/>
 			<PaymentModal ref={modalRef} />
 		</>
 	);
@@ -213,7 +216,7 @@ export default PaymentScreen;
 								placeholder={"Vendors"}
 								onChange={(value) => setFilterDetails({ ...filterDetails, vendor_id: value })}>
 								<Picker.Item value={0} label="All" />
-								{vendors1 && vendors1.map((vendor, index) => ( 
+								{vendors && vendors.map((vendor, index) => ( 
 									<Picker.Item key={index} value={vendor.id} label={vendor.name} />
 								))}
 							</Picker>

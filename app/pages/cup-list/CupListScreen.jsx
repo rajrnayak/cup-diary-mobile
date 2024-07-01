@@ -4,24 +4,36 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Card, GridList, Picker, SegmentedControl, Text, View } from "react-native-ui-lib";
 import AxiosBaseUrl from "../../component/AxiosBaseUrl";
 import Form from "./Form.jsx";
+// import CupListCardDetails from '../home/CupListCardDetails.jsx'
 
 const CupListScreen = () => {
 	const [filterDetails, setFilterDetails] = useState({
 		type: 0,
-		vendor: 0,
+		vendor: 1,
 		product: 0,
 	});
 	const [vendors, setVendors] = useState([]);
+	const [products, setProducts] = useState([]);
 	const [cupList, setCupList] = useState([]);
 	const formRef = useRef(null);
 
 	useEffect(() => {
 		loadData();
 	}, []);
+	
+	useEffect(() => {
+		if (filterDetails.vendor != 0) {
+			getProducts(filterDetails.vendor);
+			setFilterDetails({...filterDetails,product:0});
+		}else{
+			setProducts([]);
+			setFilterDetails({...filterDetails,product:''});
+		}
+	}, [filterDetails.vendor]);
 
 	const loadData = async () => {
 		await loadVendor();
-		// loadList(0, filterDetails.vendor);
+		loadList(0, filterDetails.vendor,filterDetails.product);
 	};
 
 	const loadVendor = async () => {
@@ -38,9 +50,10 @@ const CupListScreen = () => {
 			});
 	};
 
-	const loadList = (type, vendor) => {
+	const loadList = (type, vendor,product) => {
 		data = {
 			type: type,
+			vendor_id: vendor,
 			vendor_id: vendor,
 		};
 
@@ -50,11 +63,27 @@ const CupListScreen = () => {
 			data: data,
 		})
 			.then((response) => {
+				console.log(response.data.cup_list);
 				setCupList(response.data.cup_list);
 			})
 			.catch(function (error) {
-				console.log(error);
+				console.log(error.response.data.message);
 			});
+	};
+
+	const getProducts = (vendor_id) => {
+		vendor_id != "" &&
+			AxiosBaseUrl({
+				method: "get",
+				url: `get-products/${vendor_id}`,
+			})
+				.then(function (response) {
+					let products = response.data ?? [];
+					setProducts(products);
+				})
+				.catch(function (error) {
+					console.log(error.response.data.errors);
+				});
 	};
 
 	const openFormModal = () => {
@@ -105,29 +134,32 @@ const CupListScreen = () => {
 								Product
 							</Text>
 							<Picker
+							editable={filterDetails.vendor > 0 ? true : false}
+							key={products.length}
 								useWheelPicker
 								fieldStyle={{
 									borderWidth: 1,
 									borderRadius: 10,
-									borderColor: "#00A9FF",
+									borderColor: filterDetails.vendor > 0 ?'#00A9FF':"gray",
 									backgroundColor: "white",
 									padding: 10,
 								}}
 								style={{
 									textAlign: "center",
 									fontSize: 18,
-									color: "#00A9FF",
+									color: filterDetails.vendor > 0 ?'#00A9FF':"gray",
 								}}
-								placeholderTextColor="#00A9FF"
+								placeholderTextColor= {filterDetails.vendor > 0 ?'#00A9FF':"gray"}
 								value={filterDetails.product}
 								placeholder={"Products"}
 								onChange={(value) => setFilterDetails({ ...filterDetails, product: value })}>
 								<Picker.Item value={0} label="All" />
+								{products.map((product, index) => <Picker.Item key={index} value={product.id} label={product.name} />)}
 							</Picker>
 						</View>
 					</View>
 					<View flex-10>
-						<GridList
+						{/* <GridList
 							listPadding={5}
 							data={cupList}
 							numColumns={1}
@@ -137,7 +169,7 @@ const CupListScreen = () => {
 									<CupListCardDetails cupList={item} />
 								</Card>
 							)}
-						/>
+						/> */}
 					</View>
 				</View>
 			</GestureHandlerRootView>
