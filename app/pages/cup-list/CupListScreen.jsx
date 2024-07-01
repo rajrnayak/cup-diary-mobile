@@ -9,7 +9,7 @@ import CupListDetailModal from "./CupListDetailModal.jsx";
 
 const CupListScreen = () => {
 	const [filterDetails, setFilterDetails] = useState({
-		type: 0,
+		type: 1,
 		vendor: 0,
 		product: 0,
 	});
@@ -92,8 +92,22 @@ const CupListScreen = () => {
 				});
 	};
 
-	const openFormModal = () => {
-		formRef.current.open();
+	const editCupList = (id) => {
+		AxiosBaseUrl({
+			method: "get",
+			url: `cup-list/edit-cup-list/${id}`,
+		})
+			.then(function (response) {
+				// console.log(response.data);
+				openFormModal(response.data);
+			})
+			.catch(function (error) {
+				console.log(error.response.data.errors);
+			});
+	};
+
+	const openFormModal = (cupList) => {
+		formRef.current.open(cupList);
 	};
 
 	const openModal = (cupList) => {
@@ -177,7 +191,7 @@ const CupListScreen = () => {
 							numColumns={1}
 							itemSpacing={2}
 							renderItem={({ item }) => (
-								<Drawer rightItems={[{ text: "Delete", background: "red", onPress: () => console.log("delete pressed") }]} leftItem={{ text: "Update", background: "blue", onPress: () => console.log("Update pressed") }}>
+								<Drawer rightItems={[{ text: "Delete", background: "red", onPress: () => console.log("delete pressed") }]} leftItem={{ text: "Update", background: "blue", onPress: () => editCupList(item.id) }}>
 									<Card backgroundColor="white" padding-6 paddingL-10 paddingR-10 margin-4 onPress={() => openModal(item)}>
 										<CupListDetails cupList={item} />
 									</Card>

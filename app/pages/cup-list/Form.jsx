@@ -32,7 +32,12 @@ const Form = forwardRef(({ vendors }, ref) => {
 	const [products, setProducts] = useState([]);
 	const [fields, setFields] = useState(defaultField);
 
-	const open = () => {
+	const open = (cupList) => {
+		console.log(cupList);
+		// if (cupList) {
+		// 	cupList.entry_at = Date(cupList.entry_at).format("YYYY-MM-DD HH:mm");
+		// 	setFields(cupList);
+		// }
 		setIsVisible({ ...isVisible, modalOpen: true });
 	};
 
