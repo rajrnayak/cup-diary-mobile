@@ -3,7 +3,7 @@ import { Card, Chip, GridList, SegmentedControl, Text, View } from "react-native
 import CupListModal from "./CupListModal.jsx";
 import CupListCardDetails from "./CupListCardDetails.jsx";
 import OverviewCardDetails from "./OverviewCardDetails.jsx";
-import Axios from "../../component/AxiosBaseUrl.jsx";
+import AxiosInstance from "../../component/AxiosInstance.jsx";
 
 const HomeScreen = () => {
 	const [cupListTotal, setCupListTotal] = useState({
@@ -11,7 +11,6 @@ const HomeScreen = () => {
 		total_amount: 0,
 	});
 	const [cupList, setCupList] = useState([]);
-
 	const modalRef = useRef(null);
 
 	const openModal = (cupList) => {
@@ -29,9 +28,9 @@ const HomeScreen = () => {
 
 	const loadCupListTotal = (durationNumber) => {
 		data = { type: durationNumber };
-		Axios({
+		AxiosInstance({
 			method: "post",
-			url: "load-cup-list-total",
+			url: "home/load-cup-list-total",
 			data: data,
 		})
 			.then((response) => {
@@ -43,9 +42,9 @@ const HomeScreen = () => {
 	};
 
 	const loadCupList = () => {
-		Axios({
+		AxiosInstance({
 			method: "get",
-			url: "load-last-7-days-record",
+			url: "home/load-last-7-days-record",
 		})
 			.then((response) => {
 				setCupList(response.data.last_7_days);

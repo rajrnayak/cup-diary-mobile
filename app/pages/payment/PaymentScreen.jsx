@@ -2,15 +2,13 @@ import { Card, GridList, Button, Picker, SegmentedControl, Text, Toast, View, Dr
 import { useEffect, useRef, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import PaymentCardDetails from "./PaymentCardDetails";
-import Axios from "../../component/AxiosBaseUrl";
 import PaymentModal from "./PaymentModal";
-import AxiosBaseUrl from "../../component/AxiosBaseUrl";
+import AxiosInstance from "../../component/AxiosInstance";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Form from './Form';
+import Form from "./Form";
 // import { Picker } from "@react-native-picker/picker";
 
 const PaymentScreen = () => {
-
 	const [filterDetails, setFilterDetails] = useState({
 		type: 0,
 		vendor_id: 0,
@@ -21,30 +19,28 @@ const PaymentScreen = () => {
 	const [vendors, setVendors] = useState([]);
 	const modalRef = useRef(null);
 	const formRef = useRef(null);
-	
-	let types = [
-		{ id: 0, name: 'credit' },
-		{ id: 1, name: 'debit' },
-	];
 
+	let types = [
+		{ id: 0, name: "credit" },
+		{ id: 1, name: "debit" },
+	];
 
 	const openForm = (payment) => {
 		if (payment.id) {
 			payment.payment_at = new Date(payment.payment_at);
 		}
 		formRef.current.open(payment);
-	}
+	};
 
 	const openModal = (payment) => {
 		modalRef.current.open(payment);
 	};
 
-
 	function loadData() {
-		Axios({
-			method: 'post',
-			url: 'load-payments',
-			data: filterDetails
+		AxiosInstance({
+			method: "post",
+			url: "payment/load-payments",
+			data: filterDetails,
 		})
 			.then((response) => {
 				// console.log(response.data.payment_lits);
@@ -55,22 +51,24 @@ const PaymentScreen = () => {
 			});
 	}
 
-	function destroy(id){
-		Axios({
-			method:'get',
-			url:`payment/destroy/${id}`,
-		}).then((response)=>{
-			console.log(response.data);
-			loadData();
-		}).catch((error)=>{
-			console.log(error.response.data);
+	function destroy(id) {
+		AxiosInstance({
+			method: "get",
+			url: `payment/destroy/${id}`,
 		})
+			.then((response) => {
+				console.log(response.data);
+				loadData();
+			})
+			.catch((error) => {
+				console.log(error.response.data);
+			});
 	}
 
 	async function loadVendors() {
-		await Axios({
-			method: 'get',
-			url: 'load-vendor',
+		await AxiosInstance({
+			method: "get",
+			url: "payment/load-vendor",
 		})
 			.then((response) => {
 				// console.log(response.data);
@@ -86,7 +84,6 @@ const PaymentScreen = () => {
 		loadVendors();
 	}, [filterDetails]);
 
-
 	// async function myfun() {
 	// 	setIsToast(true);
 	// 	await new Promise(resolve => setTimeout(resolve, 1000));
@@ -97,17 +94,12 @@ const PaymentScreen = () => {
 		<>
 			<GestureHandlerRootView>
 				<View flex>
-					<View flex-1 center row margin-10 >
+					<View flex-1 center row margin-10>
 						<View flex-2>
 							<Text text50BO>Payments List</Text>
 						</View>
 						<View flex-2>
-							<SegmentedControl
-								backgroundColor="white"
-								activeColor="#5AB2FF"
-								segmentLabelStyle={{ width: 40, textAlign: "center" }}
-								onChangeIndex={(index) => setFilterDetails({ ...filterDetails, type: index })}
-								segments={[{ label: "All" }, { label: "Month" }, { label: "Year" }]} />
+							<SegmentedControl backgroundColor="white" activeColor="#5AB2FF" segmentLabelStyle={{ width: 40, textAlign: "center" }} onChangeIndex={(index) => setFilterDetails({ ...filterDetails, type: index })} segments={[{ label: "All" }, { label: "Month" }, { label: "Year" }]} />
 						</View>
 					</View>
 					<View flex-2 center row marginR-10 marginL-10 gap-10>
@@ -135,9 +127,7 @@ const PaymentScreen = () => {
 								placeholder={"Vendors"}
 								onChange={(value) => setFilterDetails({ ...filterDetails, vendor_id: value })}>
 								<Picker.Item value={0} label="All" />
-								{vendors && vendors.map((vendor, index) => (
-									<Picker.Item key={index} value={vendor.id} label={vendor.name} />
-								))}
+								{vendors && vendors.map((vendor, index) => <Picker.Item key={index} value={vendor.id} label={vendor.name} />)}
 							</Picker>
 						</View>
 						<View flex gap-5>
@@ -169,7 +159,7 @@ const PaymentScreen = () => {
 							</Picker>
 						</View>
 					</View>
-					<View flex-10 >
+					<View flex-10>
 						<GridList
 							listPadding={5}
 							data={paymentLits}
@@ -177,9 +167,22 @@ const PaymentScreen = () => {
 							itemSpacing={2}
 							renderItem={({ item }) => (
 								<Drawer
-									rightItems={[{ text: 'Delete', background: 'red', onPress: () => {destroy(item.id)} }]}
-									leftItem={{ text: 'Edit', background: 'blue', onPress: () => { openForm(item) } }}
-								>
+									rightItems={[
+										{
+											text: "Delete",
+											background: "red",
+											onPress: () => {
+												destroy(item.id);
+											},
+										},
+									]}
+									leftItem={{
+										text: "Edit",
+										background: "blue",
+										onPress: () => {
+											openForm(item);
+										},
+									}}>
 									<Card backgroundColor="white" padding-6 paddingL-10 paddingR-10 margin-4 onPress={() => openModal(item)}>
 										<PaymentCardDetails payment={item} />
 									</Card>
@@ -193,13 +196,13 @@ const PaymentScreen = () => {
 				style={{
 					bottom: 10,
 					right: 10,
-					position: 'absolute'
+					position: "absolute",
 				}}
 				onPress={openForm}
 				label={<Ionicons name="create" size={20} color="white" />}
 				backgroundColor="#00A9FF"
 			/>
-			<Form ref={formRef} vendors={vendors} types={types} loadData={loadData}/>
+			<Form ref={formRef} vendors={vendors} types={types} loadData={loadData} />
 			<PaymentModal ref={modalRef} />
 		</>
 	);
@@ -207,9 +210,8 @@ const PaymentScreen = () => {
 
 export default PaymentScreen;
 
-
-
-{/* 
+{
+	/* 
 <Picker
 								useWheelPicker
 								fieldStyle={{
@@ -235,4 +237,5 @@ export default PaymentScreen;
 								))}
 							</Picker>
 
-*/}
+*/
+}

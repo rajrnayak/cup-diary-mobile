@@ -4,7 +4,7 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Button, Chip, DateTimePicker, Modal, Picker, Text, TextField, Toast, View } from "react-native-ui-lib";
 import Divider from "../../component/Divider";
 import CupListCard from "./CupListCard";
-import AxiosBaseUrl from "../../component/AxiosBaseUrl";
+import AxiosInstance from "../../component/AxiosInstance";
 
 const defaultField = {
 	id: null,
@@ -98,9 +98,9 @@ const Form = forwardRef(({ vendors, loadList }, ref) => {
 
 	const getProducts = (vendor_id) => {
 		vendor_id != "" &&
-			AxiosBaseUrl({
+			AxiosInstance({
 				method: "get",
-				url: `get-products/${vendor_id}`,
+				url: `cup-list/get-products/${vendor_id}`,
 			})
 				.then(function (response) {
 					let products = response.data;
@@ -169,9 +169,9 @@ const Form = forwardRef(({ vendors, loadList }, ref) => {
 
 	function handleSubmit(data) {
 		let url = "";
-		data.id ? (url = `/store-or-update/${data.id}`) : (url = "/store-or-update");
+		data.id ? (url = `cup-list/store-or-update/${data.id}`) : (url = "cup-list/store-or-update");
 
-		AxiosBaseUrl({
+		AxiosInstance({
 			method: "post",
 			url: url,
 			data: data,

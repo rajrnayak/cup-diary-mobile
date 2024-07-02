@@ -2,7 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
 import { useEffect, useRef, useState } from "react";
 import { Button, Card, Drawer, GridList, Picker, SegmentedControl, Text, View } from "react-native-ui-lib";
-import AxiosBaseUrl from "../../component/AxiosBaseUrl";
+import AxiosInstance from "../../component/AxiosInstance";
 import Form from "./Form.jsx";
 import CupListDetails from "./CupListDetails.jsx";
 import CupListDetailModal from "./CupListDetailModal.jsx";
@@ -43,9 +43,9 @@ const CupListScreen = () => {
 	};
 
 	const loadVendor = async () => {
-		AxiosBaseUrl({
+		AxiosInstance({
 			method: "get",
-			url: "load-vendor",
+			url: "cup-list/load-vendor",
 		})
 			.then((response) => {
 				let vendors = response.data;
@@ -63,9 +63,9 @@ const CupListScreen = () => {
 			product: product,
 		};
 
-		AxiosBaseUrl({
+		AxiosInstance({
 			method: "post",
-			url: "load-cup-list-data",
+			url: "cup-list/load-cup-list-data",
 			data: data,
 		})
 			.then((response) => {
@@ -79,9 +79,9 @@ const CupListScreen = () => {
 
 	const getProducts = (vendor_id) => {
 		vendor_id != "" &&
-			AxiosBaseUrl({
+			AxiosInstance({
 				method: "get",
-				url: `get-products/${vendor_id}`,
+				url: `cup-list/get-products/${vendor_id}`,
 			})
 				.then(function (response) {
 					let products = response.data ?? [];
@@ -93,7 +93,7 @@ const CupListScreen = () => {
 	};
 
 	const editCupList = (id) => {
-		AxiosBaseUrl({
+		AxiosInstance({
 			method: "get",
 			url: `cup-list/edit-cup-list/${id}`,
 		})
@@ -108,9 +108,9 @@ const CupListScreen = () => {
 	};
 
 	const destroyCupList = (id) => {
-		AxiosBaseUrl({
+		AxiosInstance({
 			method: "get",
-			url: `/destroy/${id}`,
+			url: `cup-list/destroy/${id}`,
 		})
 			.then(function (response) {
 				console.log(response.data);
