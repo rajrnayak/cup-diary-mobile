@@ -19,7 +19,7 @@ const Layout = () => {
 	async function loadLoginData() {
 		let data = await AsyncStorage.getItem("login");
 		let value = JSON.parse(data);
-		value && dispatch(authUser({ userData: value.user, token: value.token, isLogin: true }));
+		value && dispatch(authUser({ userName: value.user, token: value.token, isLogin: true }));
 		setIsLoad(true);
 	}
 

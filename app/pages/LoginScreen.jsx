@@ -30,7 +30,7 @@ const LoginScreen = () => {
 			data: data
 		})
 			.then((response) => {
-				// console.log(response.data);
+				// console.log(response.data.userData);
 				if (response.data.userData) {
 					ToastAndroid.showWithGravity(
 						response.data.message,
@@ -38,7 +38,7 @@ const LoginScreen = () => {
 						ToastAndroid.CENTER,
 					)
 					dispatch(authUser({
-						userName: response.data.userData.first_name,
+						userName: response.data.userData,
 						token: response.data.token,
 						isLogin: true
 					}));

@@ -19,8 +19,8 @@ const PaymentCardDetails = ({ payment }) => {
 						</Text>
 					</View>
 					<View flex row gap-5 center>
-						<Text>Balance :</Text>
-						<Text text70BO color="#00A9FF">
+						<Text>Amount :</Text>
+						<Text text70BO color="lightgreen">
 							{payment.amount}
 						</Text>
 					</View>

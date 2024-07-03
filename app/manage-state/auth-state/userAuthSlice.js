@@ -11,8 +11,8 @@ export const userAuthSlice = createSlice({
     reducers: {
         authUser:(state, actions) => {
             state.isLogin = actions.payload.isLogin;
-            actions.payload.userName ? state.user = actions.payload.userName : '';
-            actions.payload.token ? state.token = actions.payload.token : '';
+            actions.payload.userName ? state.user = actions.payload.userName : state.user;
+            actions.payload.token ? state.token = actions.payload.token : state.token;
             let login ={
                 user:state.user,
                 token:state.token
