@@ -53,7 +53,7 @@ const PaymentModal = forwardRef((props, ref) => {
 							<View row>
 								<View flex center>
 									<Text>Type</Text>
-									<Text text60BO>{paymentData.current.type === 0 ? 'Credit' : 'Debit'}</Text>
+									<Text text60BO>{paymentData.current.type === 0 ? "Credit" : "Debit"}</Text>
 								</View>
 								<View flex center>
 									<Text>Amount</Text>
@@ -66,7 +66,7 @@ const PaymentModal = forwardRef((props, ref) => {
 									Payment At :
 								</Text>
 								<Text flex text70BO>
-									{paymentData.current.payment_at}
+									{paymentData.current.display_payment_at}
 								</Text>
 							</View>
 							<View row>

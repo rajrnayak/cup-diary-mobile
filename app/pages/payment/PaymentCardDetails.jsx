@@ -15,7 +15,7 @@ const PaymentCardDetails = ({ payment }) => {
 					<View flex row gap-5 center>
 						<Text>Type :</Text>
 						<Text text70BO color="#00A9FF">
-							{payment.type === 0 ? 'Credit' : 'Debit'}
+							{payment.type === 0 ? "Credit" : "Debit"}
 						</Text>
 					</View>
 					<View flex row gap-5 center>
