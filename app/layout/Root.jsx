@@ -80,6 +80,7 @@ const Root = () => {
 					component={ProfileScreen}
 					options={{
 						title: "Profile",
+						unmountOnBlur: true,
 					}}
 				/>
 			</Tab.Navigator>

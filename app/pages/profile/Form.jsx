@@ -1,9 +1,10 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import { Button, DateTimePicker, Modal, Picker, Text, TextField, View } from "react-native-ui-lib";
+import { Button, DateTimePicker, Image, Modal, Picker, Text, TextField, View } from "react-native-ui-lib";
 import AxiosInstance from "../../component/AxiosInstance";
 import Dividers from "../../component/Divider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ScrollView } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
 
 const Form = forwardRef(({ loadData }, ref) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -14,6 +15,7 @@ const Form = forwardRef(({ loadData }, ref) => {
         last_name: '',
         email: '',
         mobile_number: '',
+        profile_image_file: null,
     });
 
     const open = (user) => {
@@ -29,6 +31,7 @@ const Form = forwardRef(({ loadData }, ref) => {
             last_name: '',
             email: '',
             mobile_number: '',
+            profile_image_file: null,
         })
         setIsModalVisible(false);
     };
@@ -43,7 +46,7 @@ const Form = forwardRef(({ loadData }, ref) => {
     function handleSubmit() {
         AxiosInstance({
             method: "post",
-            url: `profile/store-or-update/${fields.id}`,
+            url: `profile/update-profile/${fields.id}`,
             data: fields,
         })
             .then((response) => {
@@ -52,9 +55,26 @@ const Form = forwardRef(({ loadData }, ref) => {
                 close();
             })
             .catch(function (error) {
-                console.log(error.response);
+                console.log(error.response.data);
             });
     }
+
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.canceled) {
+            setFields({
+                ...fields, profile_image_file: result.assets[0]});
+        }
+    };
 
     return (
         <Modal visible={isModalVisible} onRequestClose={close} animationType="slide">
@@ -74,7 +94,7 @@ const Form = forwardRef(({ loadData }, ref) => {
                             <View gap-7 marginB-10>
                                 <View flex-2>
                                     <Text text70BO color="#00A9FF">
-                                        User Name
+                                        Username
                                     </Text>
                                 </View>
                                 <View flex-5>
@@ -174,6 +194,17 @@ const Form = forwardRef(({ loadData }, ref) => {
                                             setFields({ ...fields, mobile_number: value });
                                         }}
                                     />
+                                </View>
+                            </View>
+                            <View gap-7 marginB-10>
+                                <View flex-2>
+                                    <Text text70BO color="#00A9FF">
+                                        Upload Image
+                                    </Text>
+                                </View>
+                                <View flex-5>
+                                    <Button title="Pick an image from camera roll" onPress={pickImage} label={'Choose Image'} />
+                                    <Text>{fields.profile_image_file && fields.profile_image_file.fileName}</Text>
                                 </View>
                             </View>
                             {/* <View flex-5 gap-7 marginB-10>

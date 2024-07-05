@@ -37,7 +37,7 @@ const ProfileScreen = () => {
 			url: `profile/get-user/${user.id}`,
 		})
 			.then((response) => {
-				// console.log(response.data);
+				console.log(response.data);
 				setUserData(response.data);
 				close();
 			})
@@ -52,7 +52,7 @@ const ProfileScreen = () => {
 			url: `/logout`,
 		})
 			.then((response) => {
-				console.log(response.data);
+				// console.log(response.data);
 			})
 			.catch(function (error) {
 				console.log(error.response);
@@ -109,7 +109,7 @@ const ProfileScreen = () => {
 						</View>
 						<View flex row margin-5 padding-5>
 							<View >
-								<Ionicons name='stop-circle' size={30} />
+								<Ionicons name='calendar' size={30} />
 							</View>
 							<View paddingL-10>
 								<Text centerH text70>{userData.joining_date}</Text>
