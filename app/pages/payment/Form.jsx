@@ -7,33 +7,42 @@ import { ScrollView } from "react-native";
 
 const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const [fields, setFields] = useState({
-		id: null,
-		vendor_id: 0,
-		payment_at: "",
-		type: 2,
-		amount: "",
-		remark: "",
-		created_by: 1,
-	});
+	// const {
+	// 	control,
+	// 	handleSubmit,
+	// 	setValue,
+	// 	reset,
+	// 	formState: { errors },
+	// } = useForm({
+	// 	defaultValues: {
+	// 		id: null,
+	// 		vendor_id: 0,
+	// 		payment_at: "",
+	// 		type: 2,
+	// 		amount: "",
+	// 		remark: "",
+	// 		created_by: 1,
+	// 	},
+	// });
+	// const [fields, setFields] = useState({
+	// 	id: null,
+	// 	vendor_id: 0,
+	// 	payment_at: "",
+	// 	type: 2,
+	// 	amount: "",
+	// 	remark: "",
+	// 	created_by: 1,
+	// });
 
 	const open = (payment) => {
 		if (payment.id) {
-			setFields(payment);
+			setValue(payment);
 		}
 		setIsModalVisible(true);
 	};
 
 	const close = () => {
-		setFields({
-			id: null,
-			vendor_id: 0,
-			payment_at: "",
-			type: 2,
-			amount: "",
-			remark: "",
-			created_by: 1,
-		});
+		reset();
 		setIsModalVisible(false);
 	};
 
@@ -247,6 +256,11 @@ const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 				</GestureHandlerRootView>
 				<View right marginB-10 marginR-5>
 					<Button backgroundColor="#0d6efd" label={"Submit"} borderRadius={10} onPress={handleSubmit} />
+					{/* <Button
+						label='Login'
+						backgroundColor='#00A9FF'
+						onPress={handleSubmit(onSubmit)}
+					/> */}
 				</View>
 			</View>
 		</Modal>
