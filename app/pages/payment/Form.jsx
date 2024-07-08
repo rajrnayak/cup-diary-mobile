@@ -1,38 +1,30 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Button, DateTimePicker, Modal, Picker, Text, TextField, View } from "react-native-ui-lib";
-import AxiosInstance from "../../component/AxiosInstance";
-import Dividers from "../../component/Divider";
+import { useForm, Controller } from "react-hook-form";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ScrollView } from "react-native";
+import AxiosInstance from "../../component/AxiosInstance";
+import Dividers from "../../component/Divider";
 
 const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	// const {
-	// 	control,
-	// 	handleSubmit,
-	// 	setValue,
-	// 	reset,
-	// 	formState: { errors },
-	// } = useForm({
-	// 	defaultValues: {
-	// 		id: null,
-	// 		vendor_id: 0,
-	// 		payment_at: "",
-	// 		type: 2,
-	// 		amount: "",
-	// 		remark: "",
-	// 		created_by: 1,
-	// 	},
-	// });
-	// const [fields, setFields] = useState({
-	// 	id: null,
-	// 	vendor_id: 0,
-	// 	payment_at: "",
-	// 	type: 2,
-	// 	amount: "",
-	// 	remark: "",
-	// 	created_by: 1,
-	// });
+	const {
+		control,
+		handleSubmit,
+		setValue,
+		reset,
+		formState: { errors },
+	} = useForm({
+		defaultValues: {
+			id: null,
+			vendor_id: "",
+			payment_at: "",
+			type: "",
+			amount: "",
+			remark: "",
+			created_by: "1",
+		},
+	});
 
 	const open = (payment) => {
 		if (payment.id) {
@@ -53,13 +45,12 @@ const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 		};
 	});
 
-	function handleSubmit() {
-		// const id = 17;
-		let url = fields.id ? `store-or-update/${fields.id}` : `store-or-update/`;
+	function submit(data) {
+		let url = data.id ? `store-or-update/${data.id}` : `store-or-update/`;
 		AxiosInstance({
 			method: "post",
 			url: `payment/${url}`,
-			data: fields,
+			data: data,
 		})
 			.then((response) => {
 				console.log(response.data);
@@ -72,33 +63,6 @@ const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 	}
 
 	return (
-		// <View>
-		// 			<Controller
-		// 				control={control}
-		// 				rules={{
-		// 					required: 'Email must be Required',
-		// 				}}
-		// 				render={({ field: { onChange, onBlur, value } }) => (
-		// 					<TextField
-		// 						value={value}
-		// 						onBlur={onBlur}
-		// 						onChangeText={(event) => {
-		// 							onChange(event), loginError != '' && setLoginError('');
-		// 						}}
-		// 						placeholder='Email'
-		// 						placeholderTextColor='black'
-		// 						validationMessage="Email is invalid"
-		// 						validate={'email'}
-		// 						marginL-40
-		// 						marginT-20
-		// 						containerStyle={{ borderBottomWidth: 2, width: '80%' }}
-		// 						validateOnChange
-		// 					/>
-		// 				)}
-		// 				name="email"
-		// 			/>
-		// 			{errors.email && <Text color='red' marginL-40 marginT-10>{errors.email.message}</Text>}
-		// 		</View>
 		<Modal visible={isModalVisible} onRequestClose={close} animationType="slide">
 			<View flex padding-10>
 				<View row paddingB-10 center>
@@ -120,25 +84,34 @@ const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 									</Text>
 								</View>
 								<View flex-5>
-									<Picker
-										key="formVendor"
-										useWheelPicker
-										fieldStyle={{
-											borderWidth: 1,
-											borderRadius: 10,
-											padding: 10,
+									<Controller
+										control={control}
+										rules={{
+											required: "Vendor field must be required.",
 										}}
-										style={{
-											textAlign: "center",
-											fontSize: 18,
-										}}
-										value={fields.vendor_id}
-										onChange={(value) => {
-											setFields({ ...fields, vendor_id: value });
-										}}>
-										<Picker.Item value={0} label="Select Vendor" />
-										{vendors && vendors.map((vendor, index) => <Picker.Item key={index} value={vendor.id} label={vendor.name} />)}
-									</Picker>
+										name="vendor_id"
+										render={({ field: { onChange, onBlur, value } }) => (
+											<Picker
+												key="formVendor"
+												useWheelPicker
+												fieldStyle={{
+													borderWidth: 1,
+													borderRadius: 10,
+													padding: 10,
+												}}
+												style={{
+													textAlign: "center",
+													fontSize: 18,
+												}}
+												onBlur={onBlur}
+												onChange={onChange}
+												value={value}
+												placeholder="Select Vendor">
+												{vendors && vendors.map((vendor, index) => <Picker.Item key={index} value={vendor.id} label={vendor.name} />)}
+											</Picker>
+										)}
+									/>
+									{errors.vendor_id && <Text color="red">{errors.vendor_id.message}</Text>}
 								</View>
 							</View>
 							<View flex-5 gap-7 marginB-10>
@@ -149,34 +122,53 @@ const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 								</View>
 								<View row gap-5>
 									<View flex>
-										<DateTimePicker
-											title={"Select time"}
-											value={fields.payment_at}
-											onChange={(date) => setFields({ ...fields, payment_at: date })}
-											placeholder={"Enter Date"}
-											mode={"date"}
-											padding-10
-											fieldStyle={{
-												borderWidth: 1,
-												borderRadius: 10,
+										<Controller
+											control={control}
+											rules={{
+												required: "Payment date field must be required.",
 											}}
+											name="payment_at"
+											render={({ field: { onChange, onBlur, value } }) => (
+												<DateTimePicker
+													title={"Select time"}
+													onChange={onChange}
+													value={value}
+													placeholder={"Enter Date"}
+													mode={"date"}
+													padding-10
+													fieldStyle={{
+														borderWidth: 1,
+														borderRadius: 10,
+													}}
+												/>
+											)}
 										/>
 									</View>
 									<View flex>
-										<DateTimePicker
-											title={"Select time"}
-											value={fields.payment_at}
-											onChange={(time) => setFields({ ...fields, payment_at: time })}
-											placeholder={"Enter Time"}
-											mode={"time"}
-											padding-10
-											fieldStyle={{
-												borderWidth: 1,
-												borderRadius: 10,
+										<Controller
+											control={control}
+											rules={{
+												required: "Payment date field must be required.",
 											}}
+											name="payment_at"
+											render={({ field: { onChange, onBlur, value } }) => (
+												<DateTimePicker
+													title={"Select time"}
+													onChange={onChange}
+													value={value}
+													placeholder={"Enter Time"}
+													mode={"time"}
+													padding-10
+													fieldStyle={{
+														borderWidth: 1,
+														borderRadius: 10,
+													}}
+												/>
+											)}
 										/>
 									</View>
 								</View>
+								{errors.payment_at && <Text color="red">{errors.payment_at.message}</Text>}
 							</View>
 							<View flex-5 gap-7 marginB-10>
 								<View row flex-2 gap-6>
@@ -193,39 +185,57 @@ const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 								</View>
 								<View row gap-5>
 									<View flex>
-										<Picker
-											key="type"
-											useWheelPicker
-											fieldStyle={{
-												borderWidth: 1,
-												borderRadius: 10,
-												padding: 10,
+										<Controller
+											control={control}
+											rules={{
+												required: "type field must be required.",
 											}}
-											style={{
-												textAlign: "center",
-												fontSize: 18,
-											}}
-											value={fields.type}
-											onChange={(value) => {
-												setFields({ ...fields, type: value });
-											}}>
-											<Picker.Item value={2} label="Select Type" />
-											{types && types.map((type, index) => <Picker.Item key={index} value={type.id} label={type.name} />)}
-										</Picker>
+											name="type"
+											render={({ field: { onChange, onBlur, value } }) => (
+												<Picker
+													key="type"
+													useWheelPicker
+													fieldStyle={{
+														borderWidth: 1,
+														borderRadius: 10,
+														padding: 10,
+													}}
+													style={{
+														textAlign: "center",
+														fontSize: 18,
+													}}
+													onBlur={onBlur}
+													onChange={onChange}
+													value={value}
+													placeholder="Select Type">
+													{types && types.map((type, index) => <Picker.Item key={index} value={type.id} label={type.name} />)}
+												</Picker>
+											)}
+										/>
+										{errors.type && <Text color="red">{errors.type.message}</Text>}
 									</View>
 									<View flex>
-										<TextField
-											value={`${fields.amount}`}
-											placeholder={"Enter Amount"}
-											fieldStyle={{
-												borderWidth: 1,
-												borderRadius: 10,
-												padding: 10,
+										<Controller
+											control={control}
+											rules={{
+												required: "Amount field must be required.",
 											}}
-											onChangeText={(value) => {
-												setFields({ ...fields, amount: value });
-											}}
+											name="amount"
+											render={({ field: { onChange, onBlur, value } }) => (
+												<TextField
+													fieldStyle={{
+														borderWidth: 1,
+														borderRadius: 10,
+														padding: 10,
+													}}
+													placeholder="Enter Amount"
+													onBlur={onBlur}
+													onChangeText={onChange}
+													value={value}
+												/>
+											)}
 										/>
+										{errors.amount && <Text color="red">{errors.amount.message}</Text>}
 									</View>
 								</View>
 							</View>
@@ -236,26 +246,32 @@ const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 									</Text>
 								</View>
 								<View flex-5>
-									<TextField
-										value={fields.remark}
-										placeholder={"Remark If Any"}
-										numberOfLines={3}
-										fieldStyle={{
-											borderWidth: 1,
-											borderRadius: 10,
-											padding: 10,
-										}}
-										onChangeText={(value) => {
-											setFields({ ...fields, remark: value });
-										}}
+									<Controller
+										control={control}
+										name="remark"
+										render={({ field: { onChange, onBlur, value } }) => (
+											<TextField
+												numberOfLines={3}
+												fieldStyle={{
+													borderWidth: 1,
+													borderRadius: 10,
+													padding: 10,
+												}}
+												placeholder="Remark If Any"
+												onBlur={onBlur}
+												onChangeText={onChange}
+												value={value}
+											/>
+										)}
 									/>
+									{errors.remark && <Text color="red">{errors.remark.message}</Text>}
 								</View>
 							</View>
 						</View>
 					</ScrollView>
 				</GestureHandlerRootView>
 				<View right marginB-10 marginR-5>
-					<Button backgroundColor="#0d6efd" label={"Submit"} borderRadius={10} onPress={handleSubmit} />
+					<Button backgroundColor="#0d6efd" label={"Submit"} borderRadius={10} onPress={handleSubmit(submit)} />
 					{/* <Button
 						label='Login'
 						backgroundColor='#00A9FF'
