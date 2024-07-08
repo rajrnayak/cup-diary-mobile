@@ -1,12 +1,61 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Card, Chip, Picker, Text, TextField, View } from "react-native-ui-lib";
+import { Card, Chip, Text, View } from "react-native-ui-lib";
 
-const CupListCard = ({ index, cup_list, products, deleteCupListField, changeCupListField }) => {
-	let total = cup_list.cups * cup_list.price;
+const CupListCard = ({ index, cup_list, changeCupListField }) => {
+	let total = cup_list != undefined && cup_list.price != "" && cup_list.cups * cup_list.price;
 	return (
-		<>
-			<Card flex gap-10 marginB-10 padding-10 borderWidth={1}>
-				<View flex center row>
+		cup_list != undefined &&
+		cup_list.price != "" && (
+			<>
+				<Card flex gap-10 marginB-5 marginT-5 margin-10 padding-10 borderWidth={1}>
+					<View flex row style={{ justifyContent: "space-between" }}>
+						<View marginL-5>
+							<Text text60BO>{cup_list.name}</Text>
+						</View>
+						<View marginR-5>
+							<Text text70BO>₹{cup_list.price}</Text>
+						</View>
+					</View>
+					<View flex row style={{ justifyContent: "space-between" }} center>
+						<View row>
+							<View padding-5 paddingL-15 paddingR-15 style={{ borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }} borderColor="#ff4f4f" borderWidth={1} onTouchEnd={() => changeCupListField(index, cup_list.cups - 1)}>
+								<Text color="#ff4f4f">-</Text>
+							</View>
+							<View padding-5 paddingL-15 paddingR-15 backgroundColor="#ff4f4f">
+								<Text color="white" text70BO>
+									{cup_list.cups}
+								</Text>
+							</View>
+							<View padding-5 paddingL-15 paddingR-15 borderColor="#ff4f4f" style={{ borderTopRightRadius: 10, borderBottomRightRadius: 10 }} borderWidth={1} onTouchEnd={() => changeCupListField(index, cup_list.cups + 1)}>
+								<Text color="#ff4f4f">+</Text>
+							</View>
+						</View>
+						<View>
+							<Chip
+								label={"Total Price"}
+								padding-5
+								labelStyle={{ fontSize: 15 }}
+								badgeProps={{
+									label: `${total != "" ? total : 0}`,
+									labelStyle: {
+										padding: 3,
+										fontSize: 15,
+									},
+									backgroundColor: "#ff4f4f",
+								}}
+							/>
+						</View>
+					</View>
+				</Card>
+			</>
+		)
+	);
+};
+
+export default CupListCard;
+
+{
+	/* <View flex center row>
 					<View flex left>
 						<Chip
 							label={"Total Price"}
@@ -100,10 +149,5 @@ const CupListCard = ({ index, cup_list, products, deleteCupListField, changeCupL
 							</View>
 						</View>
 					</View>
-				</View>
-			</Card>
-		</>
-	);
-};
-
-export default CupListCard;
+				</View> */
+}
