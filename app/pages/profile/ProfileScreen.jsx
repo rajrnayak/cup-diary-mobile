@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AxiosInstance from "../../component/AxiosInstance";
 import store from "../../manage-state/auth-state/store";
 import { logOut } from "../../manage-state/auth-state/userAuthSlice";
+import axios from "axios";
 
 const ProfileScreen = () => {
 	const [userData, setUserData] = useState({
@@ -28,7 +29,33 @@ const ProfileScreen = () => {
 
 	useEffect(() => {
 		loadData();
+		handleSubmit();
 	}, []);
+
+	function handleSubmit() {
+		// const fileUri = fields.profile_image_file;
+
+		let data = new FormData();
+		let file =("file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fcup-diary-mobile-77c0559f-39cd-46e0-a372-9e1c411bb34f/ImagePicker/9fbafdda-4651-4a44-9ff5-e37f57ab7e61.jpeg");
+
+		data.append('profile_image_file',{uri : file.toFile()});
+		console.log(data);
+
+		axios.post(`http://192.168.1.9:8000/api/update-profile1`, data, {
+			headers: {
+				"Accept": 'application/json',
+				"Content-type": "multipart/form-data",
+			}
+		})
+			.then((response) => {
+				console.log(response.data);
+				loadData();
+				close();
+			})
+			.catch(function (error) {
+				console.log(error.response.data);
+			});
+	}
 
 	function loadData() {
 		const { user } = store.getState().authUser;
@@ -37,9 +64,8 @@ const ProfileScreen = () => {
 			url: `profile/get-user/${user.id}`,
 		})
 			.then((response) => {
-				console.log(response.data);
+				// console.log(response.data);
 				setUserData(response.data);
-				close();
 			})
 			.catch(function (error) {
 				console.log(error.response);
@@ -57,7 +83,7 @@ const ProfileScreen = () => {
 			.catch(function (error) {
 				console.log(error.response);
 			});
-			dispatch(logOut());
+		dispatch(logOut());
 	}
 	return (
 		<>

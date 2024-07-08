@@ -63,6 +63,33 @@ const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 	}
 
 	return (
+		// <View>
+		// 			<Controller
+		// 				control={control}
+		// 				rules={{
+		// 					required: 'Email must be Required',
+		// 				}}
+		// 				render={({ field: { onChange, onBlur, value } }) => (
+		// 					<TextField
+		// 						value={value}
+		// 						onBlur={onBlur}
+		// 						onChangeText={(event) => {
+		// 							onChange(event), loginError != '' && setLoginError('');
+		// 						}}
+		// 						placeholder='Email'
+		// 						placeholderTextColor='black'
+		// 						validationMessage="Email is invalid"
+		// 						validate={'email'}
+		// 						marginL-40
+		// 						marginT-20
+		// 						containerStyle={{ borderBottomWidth: 2, width: '80%' }}
+		// 						validateOnChange
+		// 					/>
+		// 				)}
+		// 				name="email"
+		// 			/>
+		// 			{errors.email && <Text color='red' marginL-40 marginT-10>{errors.email.message}</Text>}
+		// 		</View>
 		<Modal visible={isModalVisible} onRequestClose={close} animationType="slide">
 			<View flex padding-10>
 				<View row paddingB-10 center>

@@ -3,8 +3,9 @@ import { Button, DateTimePicker, Image, Modal, Picker, Text, TextField, View } f
 import AxiosInstance from "../../component/AxiosInstance";
 import Dividers from "../../component/Divider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { ScrollView } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
+import axios from "axios";
 
 const Form = forwardRef(({ loadData }, ref) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -44,10 +45,22 @@ const Form = forwardRef(({ loadData }, ref) => {
     });
 
     function handleSubmit() {
-        AxiosInstance({
-            method: "post",
-            url: `profile/update-profile/${fields.id}`,
-            data: fields,
+        // const fileUri = fields.profile_image_file;
+
+        let data = new FormData();
+
+        data.append('profile_image_file', {
+            file : fields.profile_image_file[0], 
+            uri: fields.profile_image_file[0].uri,
+            type: fields.profile_image_file[0].mimeType,
+            fileName: fields.profile_image_file[0].fileName
+        });
+
+        axios.post(`http://192.168.1.9:8000/api/update-profile1`, data, {
+            headers: {
+                "Accept":'application/json',
+                "Content-type": "multipart/form-data",
+            }
         })
             .then((response) => {
                 console.log(response.data);
@@ -72,9 +85,16 @@ const Form = forwardRef(({ loadData }, ref) => {
 
         if (!result.canceled) {
             setFields({
-                ...fields, profile_image_file: result.assets[0]});
+                ...fields, profile_image_file: result.assets
+                // ...fields, profile_image_file: {
+                //     type: result.assets[0].mimeType,
+                //     uri: result.assets[0].uri,
+                //     fileName: result.assets[0].fileName
+                // }
+            });
         }
     };
+    // console.log(fields.profile_image_file);
 
     return (
         <Modal visible={isModalVisible} onRequestClose={close} animationType="slide">
@@ -205,6 +225,7 @@ const Form = forwardRef(({ loadData }, ref) => {
                                 <View flex-5>
                                     <Button title="Pick an image from camera roll" onPress={pickImage} label={'Choose Image'} />
                                     <Text>{fields.profile_image_file && fields.profile_image_file.fileName}</Text>
+                                    {fields.profile_image_file && <Image source={{ uri: fields.profile_image_file.uri }} style={styles.thumbnail} />}
                                 </View>
                             </View>
                             {/* <View flex-5 gap-7 marginB-10>
@@ -329,3 +350,12 @@ const Form = forwardRef(({ loadData }, ref) => {
 });
 
 export default Form;
+
+const styles = StyleSheet.create({
+    thumbnail: {
+        width: 300,
+        height: 300,
+        resizeMode: "contain",
+        marginBottom: 50,
+    },
+});

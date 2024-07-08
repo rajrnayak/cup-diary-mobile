@@ -5,6 +5,8 @@ import CupListCardDetails from "./CupListCardDetails.jsx";
 import OverviewCardDetails from "./OverviewCardDetails.jsx";
 import AxiosInstance from "../../component/AxiosInstance.jsx";
 import { FlatList, ScrollView } from "react-native";
+import { BarChart } from 'react-native-chart-kit';
+import { Dimensions } from "react-native";
 
 const HomeScreen = () => {
 	const [cupListTotal, setCupListTotal] = useState({
@@ -12,7 +14,13 @@ const HomeScreen = () => {
 		total_amount: 0,
 	});
 	const [cupList, setCupList] = useState([]);
+	const [vendorsChartData, setVendorsChartData] = useState({
+		data: [],
+		label: [],
+		colors: [],
+	});
 	const modalRef = useRef(null);
+	const screenWidth = Dimensions.get("window").width;
 
 	const openModal = (cupList) => {
 		modalRef.current.open(cupList);
@@ -25,10 +33,11 @@ const HomeScreen = () => {
 	const loadData = async () => {
 		await loadCupListTotal(0);
 		await loadCupList();
+		await loadVendorsChartData();
 	};
 
 	const loadCupListTotal = (durationNumber) => {
-		data = { type: durationNumber };
+		let data = { type: durationNumber };
 		AxiosInstance({
 			method: "post",
 			url: "home/load-cup-list-total",
@@ -55,6 +64,23 @@ const HomeScreen = () => {
 			});
 	};
 
+	const loadVendorsChartData = () => {
+		AxiosInstance({
+			method: "get",
+			url: "home/vendors-chart-data",
+		})
+			.then((response) => {
+				// console.log(response.data.vendors);
+				let colors = [];
+				response.data.vendors.status.map((status, index) => {
+					status == 0 ? colors.push('red') : colors.push('green');
+				});
+				setVendorsChartData({ ...vendorsChartData, data: response.data.vendors.data, label: response.data.vendors.label, colors: colors });
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+	};
 
 	return (
 		<>
@@ -107,16 +133,99 @@ const HomeScreen = () => {
 					<View flex-2 marginB-10>
 						<View flex-1 marginB-10 row center paddingL-10 paddingR-10>
 							<View flex-1 left>
-								<Text text50>Vendor</Text>
+								<Text text50>Vendors Chart</Text>
 							</View>
-							<View flex-2 right>
+							{/* <View flex-2 right>
 								<Text>
 									<Chip label={"Last 7 Days Details"} />
 								</Text>
-							</View>
+							</View> */}
 						</View>
 						<View flex-6>
-							
+							<View>
+								{/* <Text>Bezier Line Chart</Text> */}
+								{/* <LineChart
+									data={{
+										labels: ["January", "February", "March", "April", "May", "June"],
+										datasets: [
+											{
+												data: [
+													Math.random() * 100,
+													Math.random() * 100,
+													Math.random() * 100,
+													Math.random() * 100,
+													Math.random() * 100,
+													Math.random() * 100
+												]
+											}
+										]
+									}}
+									width={390} // from react-native
+									height={220}
+									yAxisLabel="$"
+									yAxisSuffix="k"
+									yAxisInterval={1} // optional, defaults to 1
+									chartConfig={{
+										backgroundColor: "#e26a00",
+										backgroundGradientFrom: "#fb8c00",
+										backgroundGradientTo: "#ffa726",
+										decimalPlaces: 2, // optional, defaults to 2dp
+										color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+										labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+										style: {
+											borderRadius: 16
+										},
+										propsForDots: {
+											r: "6",
+											strokeWidth: "2",
+											stroke: "#ffa726"
+										}
+									}}
+									bezier
+									style={{
+										marginVertical: 8,
+										borderRadius: 16
+									}}
+								/> */}
+								<BarChart
+									style={{
+										marginVertical: 8,
+										borderRadius: 16
+									}}
+									data={{
+										labels: vendorsChartData.label && vendorsChartData.label,
+										datasets: [
+											{
+												data: vendorsChartData.data && vendorsChartData.data,
+
+											},
+										],
+									}}
+									width={screenWidth}
+									height={300}
+									yAxisLabel="₹"
+									chartConfig={{
+										backgroundColor: "#B9D9EB",
+										backgroundGradientFrom: "#B9D9EB",
+										backgroundGradientTo: "#B9D9EB",
+										decimalPlaces: 2, // optional, defaults to 2dp
+										color: (opacity = 1) => `rgba(19,10,10, ${opacity})`,
+										// color: vendorsChartData.status && vendorsChartData.status,
+										labelColor: (opacity = 1) => `black`,
+										style: {
+											borderRadius: 16
+										},
+										propsForDots: {
+											r: "6",
+											strokeWidth: "2",
+											stroke: "black"
+										},
+										// fillShadowGradient: '#FF493B',
+										// fillShadowGradientOpacity: 1,
+									}}
+									verticalLabelRotation={30}
+								/>
+							</View>
 						</View>
 					</View>
 				</View>
