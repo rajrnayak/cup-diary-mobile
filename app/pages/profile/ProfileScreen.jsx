@@ -1,4 +1,4 @@
-import { Button, Text, View } from "react-native-ui-lib";
+import { Button, Image, Text, View } from "react-native-ui-lib";
 import { Ionicons } from '@expo/vector-icons';
 import Divider from "../../component/Divider";
 import { useEffect, useRef, useState } from "react";
@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AxiosInstance from "../../component/AxiosInstance";
 import store from "../../manage-state/auth-state/store";
 import { logOut } from "../../manage-state/auth-state/userAuthSlice";
+import { StyleSheet } from "react-native";
 
 const ProfileScreen = () => {
 	const [userData, setUserData] = useState({
@@ -18,6 +19,9 @@ const ProfileScreen = () => {
 		mobile_number: '',
 		role: '',
 		joining_date: '',
+		// profile_image:{
+		// 	path:''
+		// }
 	});
 	// const [profileImage, setProfileImage] = useState({
 	// 	uri:''
@@ -34,9 +38,9 @@ const ProfileScreen = () => {
 	}, []);
 
 
-	function loadData() {
+	async function loadData() {
 		const { user } = store.getState().authUser;
-		AxiosInstance({
+		await AxiosInstance({
 			method: "get",
 			url: `profile/get-user/${user.id}`,
 		})
@@ -62,7 +66,6 @@ const ProfileScreen = () => {
 			});
 		dispatch(logOut());
 	}
-	console.log(userData.profile_image.path);
 	return (
 		<>
 			<View flex gap-5 >
@@ -71,7 +74,10 @@ const ProfileScreen = () => {
 					<View flex center gap-10>
 						<View backgroundColor="#4bc2ff21" height={80} width={80} style={{ borderRadius: 40, borderColor: '#5cc0b6', borderWidth: 1.5 }} center>
 							{/* <Text text30BO color='#68b6dd'>MS</Text> */}
-							{/* {userData.profile_image.path && <Image source={'http://192.168.1.9:8000/storage/1720433474-raj'} />} */}
+							{/* {fields.profile_image_file && <Image source={{ uri: http://192.168.1.9:8000/images/profile/1720433474-raj.jpeg }} style={styles.thumbnail} />} */}
+							{userData.profile_image_path ? 
+								<Image source={{ uri: `http://192.168.1.9:8000/${userData.profile_image_path}` }} style={styles.thumbnail} /> : 
+								<Image source={{ uri: `http://192.168.1.9:8000/storage/images/profile/default-profile.jpeg`}} style={styles.thumbnail} />}
 						</View>
 						<Text text60>{userData.username}</Text>
 						<Text text70L>{userData.role.display_name}</Text>
@@ -142,3 +148,10 @@ const ProfileScreen = () => {
 };
 
 export default ProfileScreen;
+const styles = StyleSheet.create({
+	thumbnail: {
+		width: 50,
+		height: 50,
+		resizeMode: "contain",
+	},
+});

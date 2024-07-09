@@ -146,13 +146,12 @@ const HomeScreen = () => {
 						<View flex-6 >
 							<View style={{ backgroundColor: '#ddecf4'}} flex-4>
 								<BarChart
-									width={screenWidth}
-									isAnimated
+									width={400}
 									data={vendorsChartData && vendorsChartData}
 									barWidth={16}
 									// rotateLabel={20}
 									initialSpacing={10}
-									spacing={screenWidth / vendorsChartData.length}
+									spacing={30}
 									barBorderRadius={4}
 									showGradient
 									yAxisThickness={0}
