@@ -27,8 +27,13 @@ const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 	});
 
 	const open = (payment) => {
-		if (payment.id) {
-			setValue(payment);
+		if (payment) {
+			setValue("id", payment.id);
+			setValue("vendor_id", payment.vendor_id);
+			setValue("payment_at", payment.payment_at);
+			setValue("type", payment.type);
+			setValue("amount", `${payment.amount}`);
+			setValue("remark", payment.remark);
 		}
 		setIsModalVisible(true);
 	};
