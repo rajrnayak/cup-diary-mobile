@@ -11,13 +11,13 @@ const Form = forwardRef(({ loadData }, ref) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [fields, setFields] = useState({
         id: null,
-        userName: '',
+        username: '',
         first_name: '',
         last_name: '',
         email: '',
         mobile_number: '',
-        profile_image_file: null,
     });
+    const [image, setImage] = useState({});
 
     const open = (user) => {
         setFields(user);
@@ -27,12 +27,11 @@ const Form = forwardRef(({ loadData }, ref) => {
     const close = () => {
         setFields({
             id: null,
-            userName: '',
+            username: '',
             first_name: '',
             last_name: '',
             email: '',
             mobile_number: '',
-            profile_image_file: null,
         })
         setIsModalVisible(false);
     };
@@ -45,22 +44,29 @@ const Form = forwardRef(({ loadData }, ref) => {
     });
 
     function handleSubmit() {
-        // const fileUri = fields.profile_image_file;
 
         let data = new FormData();
 
         data.append('profile_image_file', {
-            file : fields.profile_image_file[0], 
-            uri: fields.profile_image_file[0].uri,
-            type: fields.profile_image_file[0].mimeType,
-            fileName: fields.profile_image_file[0].fileName
+            uri: image.uri,
+            type: image.mimeType,
+            name: image.fileName,
         });
-
-        axios.post(`http://192.168.1.9:8000/api/update-profile1`, data, {
+        data.append('id', fields.id);
+        data.append('username', fields.username);
+        data.append('first_name', fields.first_name);
+        data.append('last_name', fields.last_name);
+        data.append('email', fields.email);
+        data.append('mobile_number', fields.mobile_number);
+// console.log(data);
+        AxiosInstance({
+            method: "post",
+            url: `profile/update-profile/${fields.id}`,
             headers: {
-                "Accept":'application/json',
+                "Accept": 'application/json',
                 "Content-type": "multipart/form-data",
-            }
+            },
+            data: data,
         })
             .then((response) => {
                 console.log(response.data);
@@ -70,6 +76,31 @@ const Form = forwardRef(({ loadData }, ref) => {
             .catch(function (error) {
                 console.log(error.response.data);
             });
+
+
+        // let data = new FormData();
+
+        // data.append('profile_image_file', {
+        //     file: fields.profile_image_file[0],
+        //     uri: fields.profile_image_file[0].uri,
+        //     type: fields.profile_image_file[0].mimeType,
+        //     name: fields.profile_image_file[0].fileName
+        // });
+
+        // axios.post(`http://192.168.1.9:8000/api/update-profile1`, data, {
+        //     headers: {
+        //         "Accept": 'application/json',
+        //         "Content-type": "multipart/form-data",
+        //     }
+        // })
+        //     .then((response) => {
+        //         console.log(response.data);
+        //         loadData();
+        //         close();
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error.response.data);
+        //     });
     }
 
     const pickImage = async () => {
@@ -84,17 +115,10 @@ const Form = forwardRef(({ loadData }, ref) => {
         console.log(result);
 
         if (!result.canceled) {
-            setFields({
-                ...fields, profile_image_file: result.assets
-                // ...fields, profile_image_file: {
-                //     type: result.assets[0].mimeType,
-                //     uri: result.assets[0].uri,
-                //     fileName: result.assets[0].fileName
-                // }
-            });
+            setImage(result.assets[0]);
         }
     };
-    // console.log(fields.profile_image_file);
+
 
     return (
         <Modal visible={isModalVisible} onRequestClose={close} animationType="slide">

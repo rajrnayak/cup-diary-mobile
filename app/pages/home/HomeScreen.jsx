@@ -5,8 +5,9 @@ import CupListCardDetails from "./CupListCardDetails.jsx";
 import OverviewCardDetails from "./OverviewCardDetails.jsx";
 import AxiosInstance from "../../component/AxiosInstance.jsx";
 import { FlatList, ScrollView } from "react-native";
-import { BarChart } from 'react-native-chart-kit';
+// import { BarChart } from 'react-native-chart-kit';
 import { Dimensions } from "react-native";
+import { BarChart } from "react-native-gifted-charts";
 
 const HomeScreen = () => {
 	const [cupListTotal, setCupListTotal] = useState({
@@ -67,21 +68,27 @@ const HomeScreen = () => {
 	const loadVendorsChartData = () => {
 		AxiosInstance({
 			method: "get",
-			url: "home/vendors-chart-data",
+			url: "home/chart-data",
 		})
 			.then((response) => {
-				// console.log(response.data.vendors);
-				let colors = [];
-				response.data.vendors.status.map((status, index) => {
-					status == 0 ? colors.push('red') : colors.push('green');
+				console.log(response.data.data);
+				let chartData = [];
+				// odd => red 
+				// even => green
+				response.data.data.map((d, index) => {
+					if (index % 2 == 0) {
+						chartData.push({ label: d.label, value: d.value, spacing: 6, frontColor: 'red', gradientColor: '#fb8e8e' });
+					} else {
+						chartData.push({ value: d.value, frontColor: 'green', gradientColor: '#7ffcad' });
+					}
 				});
-				setVendorsChartData({ ...vendorsChartData, data: response.data.vendors.data, label: response.data.vendors.label, colors: colors });
+				setVendorsChartData(chartData);
 			})
 			.catch(function (error) {
 				console.log(error);
 			});
 	};
-
+console.log(vendorsChartData);
 	return (
 		<>
 			<ScrollView nestedScrollEnabled={true}>
@@ -104,7 +111,7 @@ const HomeScreen = () => {
 							</Card>
 						</View>
 					</View>
-					<View flex-2 marginB-10>
+					<View flex-2 >
 						<View flex-1 marginB-10 row center paddingL-10 paddingR-10>
 							<View flex-1 left>
 								<Text text50>Cup List</Text>
@@ -130,7 +137,7 @@ const HomeScreen = () => {
 							/>
 						</View>
 					</View>
-					<View flex-2 marginB-10>
+					<View flex-2 >
 						<View flex-1 marginB-10 row center paddingL-10 paddingR-10>
 							<View flex-1 left>
 								<Text text50>Vendors Chart</Text>
@@ -141,53 +148,39 @@ const HomeScreen = () => {
 								</Text>
 							</View> */}
 						</View>
-						<View flex-6>
-							<View>
-								{/* <Text>Bezier Line Chart</Text> */}
-								{/* <LineChart
-									data={{
-										labels: ["January", "February", "March", "April", "May", "June"],
-										datasets: [
-											{
-												data: [
-													Math.random() * 100,
-													Math.random() * 100,
-													Math.random() * 100,
-													Math.random() * 100,
-													Math.random() * 100,
-													Math.random() * 100
-												]
-											}
-										]
-									}}
-									width={390} // from react-native
-									height={220}
-									yAxisLabel="$"
-									yAxisSuffix="k"
-									yAxisInterval={1} // optional, defaults to 1
-									chartConfig={{
-										backgroundColor: "#e26a00",
-										backgroundGradientFrom: "#fb8c00",
-										backgroundGradientTo: "#ffa726",
-										decimalPlaces: 2, // optional, defaults to 2dp
-										color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-										labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-										style: {
-											borderRadius: 16
-										},
-										propsForDots: {
-											r: "6",
-											strokeWidth: "2",
-											stroke: "#ffa726"
-										}
-									}}
-									bezier
-									style={{
-										marginVertical: 8,
-										borderRadius: 16
-									}}
-								/> */}
+						<View flex-6 >
+							<View style={{ backgroundColor: '#ddecf4'}} flex-4>
 								<BarChart
+									width={screenWidth}
+									isAnimated
+									data={vendorsChartData && vendorsChartData}
+									barWidth={16}
+									// rotateLabel={20}
+									initialSpacing={10}
+									spacing={screenWidth / vendorsChartData.length}
+									barBorderRadius={4}
+									showGradient
+									yAxisThickness={0}
+									xAxisType={'dashed'}
+									// xAxisColor={'lightgray'}
+									yAxisTextStyle={{ color: 'black' }}
+									// stepValue={1000}
+									// maxValue={6000}
+									// noOfSections={6}
+									// yAxisLabelTexts={['0', '1k', '2k', '3k', '4k', '5k', '6k']}
+									labelWidth={40}
+									xAxisLabelTextStyle={{ color: 'black', textAlign: 'center' }}
+								// showLine
+								// lineConfig={{
+								// 	color: '#F29C6E',
+								// 	thickness: 3,
+								// 	curved: true,
+								// 	hideDataPoints: true,
+								// 	shiftY: 20,
+								// 	initialSpacing: -30,
+								// }}
+								/>
+								{/* <BarChart
 									style={{
 										marginVertical: 8,
 										borderRadius: 16
@@ -224,8 +217,9 @@ const HomeScreen = () => {
 										// fillShadowGradientOpacity: 1,
 									}}
 									verticalLabelRotation={30}
-								/>
+								/> */}
 							</View>
+							{/* <View flex></View> */}
 						</View>
 					</View>
 				</View>
