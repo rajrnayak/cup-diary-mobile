@@ -15,11 +15,7 @@ const HomeScreen = () => {
 		total_amount: 0,
 	});
 	const [cupList, setCupList] = useState([]);
-	const [vendorsChartData, setVendorsChartData] = useState({
-		data: [],
-		label: [],
-		colors: [],
-	});
+	const [vendorsChartData, setVendorsChartData] = useState([]);
 	const modalRef = useRef(null);
 	const screenWidth = Dimensions.get("window").width;
 
@@ -88,7 +84,6 @@ const HomeScreen = () => {
 				console.log(error);
 			});
 	};
-console.log(vendorsChartData);
 	return (
 		<>
 			<ScrollView nestedScrollEnabled={true}>
