@@ -30,7 +30,7 @@ const LoginScreen = () => {
 			data: data
 		})
 			.then((response) => {
-				// console.log(response.data.userData);
+				// console.log(response.data);
 				if (response.data.userData) {
 					ToastAndroid.showWithGravity(
 						response.data.message,

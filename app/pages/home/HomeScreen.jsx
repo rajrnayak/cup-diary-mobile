@@ -109,6 +109,76 @@ const HomeScreen = () => {
 					<View flex-2 >
 						<View flex-1 marginB-10 row center paddingL-10 paddingR-10>
 							<View flex-1 left>
+								<Text text50>Vendors Chart</Text>
+							</View>
+							{/* <View flex-2 right>
+								<Text>
+									<Chip label={"Last 7 Days Details"} />
+								</Text>
+							</View> */}
+						</View>
+						<View flex-6 padding-7>
+							<View padding-3 style={{ backgroundColor: '#f7f6f7', borderWidth: 2, borderRadius: 10 }} flex-4>
+								<View marginV-10 >
+									<Text  color="black" text60BO center >Vendors Chart</Text>
+									<View flex row marginT-10 style={{ justifyContent: 'space-evenly' }}>
+										<View row center>
+											<View height={12} width={12} backgroundColor="#ED6665" marginR-8
+												style={{
+													borderRadius: 6,
+												}}
+											/>
+											<Text color='black' style={{ width: 60, height: 16, }}>Expense</Text>
+										</View>
+										<View row center>
+											<View height={12} width={12} backgroundColor="lightgreen" marginR-8
+												style={{ borderRadius: 6, }}
+											/>
+											<Text color='black' style={{ width: 60, height: 16, }}>Payment</Text>
+										</View>
+									</View>
+								</View>
+								<View marginV-10>
+									<BarChart
+										width={screenWidth}
+										height={250}
+										data={vendorsChartData && vendorsChartData}
+										barWidth={16}
+										// rotateLabel={20}
+										initialSpacing={10}
+										spacing={35}
+										barBorderRadius={4}
+										showGradient
+										yAxisThickness={1}
+										xAxisType={'solid'}
+										// xAxisColor={'lightgray'}
+										yAxisTextStyle={{ color: 'black' }}
+										// stepValue={1000}
+										// maxValue={6000}
+										// noOfSections={6}
+										// yAxisLabelTexts={['0', '1k', '2k', '3k', '4k', '5k', '6k']}
+										
+										labelWidth={40}
+										xAxisLabelTextStyle={{ color: 'black', textAlign: 'center' }}
+										isAnimated
+									// showLine
+									// lineConfig={{
+									// 	color: '#F29C6E',
+									// 	thickness: 3,
+									// 	curved: true,
+									// 	hideDataPoints: true,
+									// 	shiftY: 20,
+									// 	initialSpacing: -30,
+									// }}
+									/>
+								</View>
+							</View>
+							{/* <View flex></View> */}
+						</View>
+					</View>
+					<View flex-2 >
+						<View flex-1 marginB-10 marginT-20 row center paddingL-10 paddingR-10>
+							<View flex-1 left>
 								<Text text50>Cup List</Text>
 							</View>
 							<View flex-2 right>
@@ -132,92 +202,8 @@ const HomeScreen = () => {
 							/>
 						</View>
 					</View>
-					<View flex-2 >
-						<View flex-1 marginB-10 row center paddingL-10 paddingR-10>
-							<View flex-1 left>
-								<Text text50>Vendors Chart</Text>
-							</View>
-							{/* <View flex-2 right>
-								<Text>
-									<Chip label={"Last 7 Days Details"} />
-								</Text>
-							</View> */}
-						</View>
-						<View flex-6 >
-							<View style={{ backgroundColor: '#ddecf4'}} flex-4>
-								<BarChart
-									width={400}
-									data={vendorsChartData && vendorsChartData}
-									barWidth={16}
-									// rotateLabel={20}
-									initialSpacing={10}
-									spacing={30}
-									barBorderRadius={4}
-									showGradient
-									yAxisThickness={0}
-									xAxisType={'dashed'}
-									// xAxisColor={'lightgray'}
-									yAxisTextStyle={{ color: 'black' }}
-									// stepValue={1000}
-									// maxValue={6000}
-									// noOfSections={6}
-									// yAxisLabelTexts={['0', '1k', '2k', '3k', '4k', '5k', '6k']}
-									labelWidth={40}
-									xAxisLabelTextStyle={{ color: 'black', textAlign: 'center' }}
-								// showLine
-								// lineConfig={{
-								// 	color: '#F29C6E',
-								// 	thickness: 3,
-								// 	curved: true,
-								// 	hideDataPoints: true,
-								// 	shiftY: 20,
-								// 	initialSpacing: -30,
-								// }}
-								/>
-								{/* <BarChart
-									style={{
-										marginVertical: 8,
-										borderRadius: 16
-									}}
-									data={{
-										labels: vendorsChartData.label && vendorsChartData.label,
-										datasets: [
-											{
-												data: vendorsChartData.data && vendorsChartData.data,
-
-											},
-										],
-									}}
-									width={screenWidth}
-									height={300}
-									yAxisLabel="₹"
-									chartConfig={{
-										backgroundColor: "#B9D9EB",
-										backgroundGradientFrom: "#B9D9EB",
-										backgroundGradientTo: "#B9D9EB",
-										decimalPlaces: 2, // optional, defaults to 2dp
-										color: (opacity = 1) => `rgba(19,10,10, ${opacity})`,
-										// color: vendorsChartData.status && vendorsChartData.status,
-										labelColor: (opacity = 1) => `black`,
-										style: {
-											borderRadius: 16
-										},
-										propsForDots: {
-											r: "6",
-											strokeWidth: "2",
-											stroke: "black"
-										},
-										// fillShadowGradient: '#FF493B',
-										// fillShadowGradientOpacity: 1,
-									}}
-									verticalLabelRotation={30}
-								/> */}
-							</View>
-							{/* <View flex></View> */}
-						</View>
-					</View>
 				</View>
-			</ScrollView>
+			</ScrollView >
 			<CupListModal ref={modalRef} />
 		</>
 	);
@@ -273,3 +259,41 @@ export default HomeScreen;
 				</View>
 				<CupListModal ref={modalRef} />
 */
+{/* <BarChart
+									style={{
+										marginVertical: 8,
+										borderRadius: 16
+									}}
+									data={{
+										labels: vendorsChartData.label && vendorsChartData.label,
+										datasets: [
+											{
+												data: vendorsChartData.data && vendorsChartData.data,
+
+											},
+										],
+									}}
+									width={screenWidth}
+									height={300}
+									yAxisLabel="₹"
+									chartConfig={{
+										backgroundColor: "#B9D9EB",
+										backgroundGradientFrom: "#B9D9EB",
+										backgroundGradientTo: "#B9D9EB",
+										decimalPlaces: 2, // optional, defaults to 2dp
+										color: (opacity = 1) => `rgba(19,10,10, ${opacity})`,
+										// color: vendorsChartData.status && vendorsChartData.status,
+										labelColor: (opacity = 1) => `black`,
+										style: {
+											borderRadius: 16
+										},
+										propsForDots: {
+											r: "6",
+											strokeWidth: "2",
+											stroke: "black"
+										},
+										// fillShadowGradient: '#FF493B',
+										// fillShadowGradientOpacity: 1,
+									}}
+									verticalLabelRotation={30}
+								/> */}

@@ -80,7 +80,7 @@ const ProfileScreen = () => {
 								<Image source={{ uri: `http://192.168.1.9:8000/storage/images/profile/default-profile.jpeg`}} style={styles.thumbnail} />}
 						</View>
 						<Text text60>{userData.username}</Text>
-						<Text text70L>{userData.role.display_name}</Text>
+						<Text text70L>{userData.role_name}</Text>
 					</View>
 				</View>
 				<View flex-5 margin-10 backgroundColor="#4bc2ff21" style={{ borderRadius: 20 }}>
@@ -150,8 +150,9 @@ const ProfileScreen = () => {
 export default ProfileScreen;
 const styles = StyleSheet.create({
 	thumbnail: {
-		width: 50,
-		height: 50,
+		borderRadius:40,
+		width: 70,
+		height: 70,
 		resizeMode: "contain",
 	},
 });
