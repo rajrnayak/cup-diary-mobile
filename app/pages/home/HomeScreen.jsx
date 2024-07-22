@@ -13,6 +13,8 @@ const HomeScreen = () => {
 	const [cupListTotal, setCupListTotal] = useState({
 		total_cups: 0,
 		total_amount: 0,
+		last_month_expense: 0,
+		last_month_payment: 0,
 	});
 	const [cupList, setCupList] = useState([]);
 	const [vendorsChartData, setVendorsChartData] = useState([]);
@@ -29,8 +31,29 @@ const HomeScreen = () => {
 
 	const loadData = async () => {
 		await loadCupListTotal(0);
+		await loadLastMonthDetails();
 		await loadCupList();
 		await loadVendorsChartData();
+	};
+
+	const loadLastMonthDetails = () => {
+		AxiosInstance({
+			method: "post",
+			url: "home/load-last-month-details",
+			data: data,
+		})
+			.then((response) => {
+				let expense = response.data.lastMonthExpense;
+				let payment = response.data.lastPayment;
+				setCupListTotal({
+					...cupListTotal,
+					last_month_expense: expense,
+					last_month_payment: payment,
+				});
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
 	};
 
 	const loadCupListTotal = (durationNumber) => {
@@ -69,13 +92,13 @@ const HomeScreen = () => {
 			.then((response) => {
 				console.log(response.data.data);
 				let chartData = [];
-				// odd => red 
+				// odd => red
 				// even => green
 				response.data.data.map((d, index) => {
 					if (index % 2 == 0) {
-						chartData.push({ label: d.label, value: d.value, spacing: 6, frontColor: 'red', gradientColor: '#fb8e8e' });
+						chartData.push({ label: d.label, value: d.value, spacing: 6, frontColor: "red", gradientColor: "#fb8e8e" });
 					} else {
-						chartData.push({ value: d.value, frontColor: 'green', gradientColor: '#7ffcad' });
+						chartData.push({ value: d.value, frontColor: "green", gradientColor: "#7ffcad" });
 					}
 				});
 				setVendorsChartData(chartData);
@@ -97,16 +120,24 @@ const HomeScreen = () => {
 								<SegmentedControl initialIndex={0} backgroundColor="white" onChangeIndex={loadCupListTotal} segmentLabelStyle={{ width: 40, textAlign: "center" }} activeColor="#5AB2FF" segments={[{ label: "Week" }, { label: "Month" }]} />
 							</View>
 						</View>
-						<View flex-2 row gap-10>
-							<Card flex backgroundColor="white">
-								<OverviewCardDetails icon="cafe-outline" text="Total Orders" value={cupListTotal.total_cups} />
-							</Card>
-							<Card flex center backgroundColor="white">
-								<OverviewCardDetails icon="cash-outline" text="Total Amounts" value={cupListTotal.total_amount} amountIcon />
-							</Card>
-						</View>
+						<ScrollView horizontal>
+							<View row gap-10>
+								<Card backgroundColor="white">
+									<OverviewCardDetails icon="cafe-outline" text="Orders" value={cupListTotal.total_cups} />
+								</Card>
+								<Card flex center backgroundColor="white">
+									<OverviewCardDetails icon="cash-outline" text="Amounts" value={cupListTotal.total_amount} amountIcon />
+								</Card>
+								<Card flex backgroundColor="white">
+									<OverviewCardDetails text="Last Month Expense" value={cupListTotal.last_month_expense} amountIcon />
+								</Card>
+								<Card flex center backgroundColor="white">
+									<OverviewCardDetails text="Last Month Payment" value={cupListTotal.last_month_payment} amountIcon />
+								</Card>
+							</View>
+						</ScrollView>
 					</View>
-					<View flex-2 >
+					<View flex-2>
 						<View flex-1 marginB-10 row center paddingL-10 paddingR-10>
 							<View flex-1 left>
 								<Text text50>Vendors Chart</Text>
@@ -118,23 +149,31 @@ const HomeScreen = () => {
 							</View> */}
 						</View>
 						<View flex-6 padding-7>
-							<View padding-3 style={{ backgroundColor: '#f7f6f7', borderWidth: 2, borderRadius: 10 }} flex-4>
-								<View marginV-10 >
-									<Text  color="black" text60BO center >Vendors Chart</Text>
-									<View flex row marginT-10 style={{ justifyContent: 'space-evenly' }}>
+							<View padding-3 style={{ backgroundColor: "#f7f6f7", borderWidth: 2, borderRadius: 10 }} flex-4>
+								<View marginV-10>
+									<Text color="black" text60BO center>
+										Vendors Chart
+									</Text>
+									<View flex row marginT-10 style={{ justifyContent: "space-evenly" }}>
 										<View row center>
-											<View height={12} width={12} backgroundColor="#ED6665" marginR-8
+											<View
+												height={12}
+												width={12}
+												backgroundColor="#ED6665"
+												marginR-8
 												style={{
 													borderRadius: 6,
 												}}
 											/>
-											<Text color='black' style={{ width: 60, height: 16, }}>Expense</Text>
+											<Text color="black" style={{ width: 60, height: 16 }}>
+												Expense
+											</Text>
 										</View>
 										<View row center>
-											<View height={12} width={12} backgroundColor="lightgreen" marginR-8
-												style={{ borderRadius: 6, }}
-											/>
-											<Text color='black' style={{ width: 60, height: 16, }}>Payment</Text>
+											<View height={12} width={12} backgroundColor="lightgreen" marginR-8 style={{ borderRadius: 6 }} />
+											<Text color="black" style={{ width: 60, height: 16 }}>
+												Payment
+											</Text>
 										</View>
 									</View>
 								</View>
@@ -150,33 +189,33 @@ const HomeScreen = () => {
 										barBorderRadius={4}
 										showGradient
 										yAxisThickness={1}
-										xAxisType={'solid'}
+										xAxisType={"solid"}
 										// xAxisColor={'lightgray'}
-										yAxisTextStyle={{ color: 'black' }}
+										yAxisTextStyle={{ color: "black" }}
 										// stepValue={1000}
 										// maxValue={6000}
 										// noOfSections={6}
 										// yAxisLabelTexts={['0', '1k', '2k', '3k', '4k', '5k', '6k']}
-										
+
 										labelWidth={40}
-										xAxisLabelTextStyle={{ color: 'black', textAlign: 'center' }}
+										xAxisLabelTextStyle={{ color: "black", textAlign: "center" }}
 										isAnimated
-									// showLine
-									// lineConfig={{
-									// 	color: '#F29C6E',
-									// 	thickness: 3,
-									// 	curved: true,
-									// 	hideDataPoints: true,
-									// 	shiftY: 20,
-									// 	initialSpacing: -30,
-									// }}
+										// showLine
+										// lineConfig={{
+										// 	color: '#F29C6E',
+										// 	thickness: 3,
+										// 	curved: true,
+										// 	hideDataPoints: true,
+										// 	shiftY: 20,
+										// 	initialSpacing: -30,
+										// }}
 									/>
 								</View>
 							</View>
 							{/* <View flex></View> */}
 						</View>
 					</View>
-					<View flex-2 >
+					<View flex-2>
 						<View flex-1 marginB-10 marginT-20 row center paddingL-10 paddingR-10>
 							<View flex-1 left>
 								<Text text50>Cup List</Text>
@@ -203,7 +242,7 @@ const HomeScreen = () => {
 						</View>
 					</View>
 				</View>
-			</ScrollView >
+			</ScrollView>
 			<CupListModal ref={modalRef} />
 		</>
 	);
@@ -259,7 +298,8 @@ export default HomeScreen;
 				</View>
 				<CupListModal ref={modalRef} />
 */
-{/* <BarChart
+{
+	/* <BarChart
 									style={{
 										marginVertical: 8,
 										borderRadius: 16
@@ -296,4 +336,5 @@ export default HomeScreen;
 										// fillShadowGradientOpacity: 1,
 									}}
 									verticalLabelRotation={30}
-								/> */}
+								/> */
+}

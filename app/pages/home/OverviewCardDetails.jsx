@@ -4,13 +4,13 @@ import { Text, View } from "react-native-ui-lib";
 const OverviewCardDetails = ({ icon, text, value, amountIcon }) => {
 	return (
 		<>
-			<View flex center padding-20>
+			<View width={180} flex padding-10 gap-3>
 				<View flex-1 row center gap-10>
-					<Ionicons name={icon} size={32} color="#5AB2FF" />
+					{icon && <Ionicons name={icon} size={32} color="#5AB2FF" />}
 					<Text>{text}</Text>
 				</View>
 				<View flex-1 center>
-					<Text text30>{amountIcon ? "₹" + value ?? 0 : value ?? 0}</Text>
+					<Text text50BL>{value ? (amountIcon ? "₹ " + value : value) : 0}</Text>
 				</View>
 			</View>
 		</>
