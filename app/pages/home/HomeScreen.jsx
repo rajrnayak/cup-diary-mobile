@@ -38,9 +38,8 @@ const HomeScreen = () => {
 
 	const loadLastMonthDetails = () => {
 		AxiosInstance({
-			method: "post",
+			method: "get",
 			url: "home/load-last-month-details",
-			data: data,
 		})
 			.then((response) => {
 				let expense = response.data.lastMonthExpense;
