@@ -16,6 +16,7 @@ const HomeScreen = () => {
 		last_month_expense: 0,
 		last_month_payment: 0,
 	});
+	const [lastMonthData, setLastMonthData] = useState([]);
 	const [cupList, setCupList] = useState([]);
 	const [vendorsChartData, setVendorsChartData] = useState([]);
 	const modalRef = useRef(null);
@@ -44,10 +45,9 @@ const HomeScreen = () => {
 			.then((response) => {
 				let expense = response.data.lastMonthExpense;
 				let payment = response.data.lastPayment;
-				setCupListTotal({
-					...cupListTotal,
+				setLastMonthData({
 					last_month_expense: expense,
-					last_month_payment: payment,
+					last_payment: payment,
 				});
 			})
 			.catch(function (error) {
@@ -128,10 +128,10 @@ const HomeScreen = () => {
 									<OverviewCardDetails icon="cash-outline" text="Amounts" value={cupListTotal.total_amount} amountIcon />
 								</Card>
 								<Card flex backgroundColor="white">
-									<OverviewCardDetails text="Last Month Expense" value={cupListTotal.last_month_expense} amountIcon />
+									<OverviewCardDetails text="Last Month Expense" value={lastMonthData.last_month_expense} amountIcon />
 								</Card>
 								<Card flex center backgroundColor="white">
-									<OverviewCardDetails text="Last Month Payment" value={cupListTotal.last_month_payment} amountIcon />
+									<OverviewCardDetails text="Last Payment" value={lastMonthData.last_payment} amountIcon />
 								</Card>
 							</View>
 						</ScrollView>
