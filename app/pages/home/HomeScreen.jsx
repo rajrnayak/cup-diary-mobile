@@ -95,9 +95,9 @@ const HomeScreen = () => {
 				// even => green
 				response.data.data.map((d, index) => {
 					if (index % 2 == 0) {
-						chartData.push({ label: d.label, value: d.value, spacing: 6, frontColor: "red", gradientColor: "#fb8e8e" });
+						chartData.push({ label: d.label, value: d.value, spacing: 6, frontColor: "#fc5353" });
 					} else {
-						chartData.push({ value: d.value, frontColor: "green", gradientColor: "#7ffcad" });
+						chartData.push({ value: d.value, frontColor: "#00bf03" });
 					}
 				});
 				setVendorsChartData(chartData);
@@ -141,11 +141,11 @@ const HomeScreen = () => {
 							<View flex-1 left>
 								<Text text50>Vendors Chart</Text>
 							</View>
-							{/* <View flex-2 right>
+							<View flex-1 right>
 								<Text>
-									<Chip label={"Last 7 Days Details"} />
+									<Chip label={"Last 3 Months Details"} />
 								</Text>
-							</View> */}
+							</View>
 						</View>
 						<View flex-6 padding-7>
 							<View padding-3 style={{ backgroundColor: "#f7f6f7", borderWidth: 2, borderRadius: 10 }} flex-4>
@@ -158,7 +158,7 @@ const HomeScreen = () => {
 											<View
 												height={12}
 												width={12}
-												backgroundColor="#ED6665"
+												backgroundColor="#fc5353"
 												marginR-8
 												style={{
 													borderRadius: 6,
@@ -169,7 +169,7 @@ const HomeScreen = () => {
 											</Text>
 										</View>
 										<View row center>
-											<View height={12} width={12} backgroundColor="lightgreen" marginR-8 style={{ borderRadius: 6 }} />
+											<View height={12} width={12} backgroundColor="#00bf03" marginR-8 style={{ borderRadius: 6 }} />
 											<Text color="black" style={{ width: 60, height: 16 }}>
 												Payment
 											</Text>
@@ -186,7 +186,6 @@ const HomeScreen = () => {
 										initialSpacing={10}
 										spacing={35}
 										barBorderRadius={4}
-										showGradient
 										yAxisThickness={1}
 										xAxisType={"solid"}
 										// xAxisColor={'lightgray'}

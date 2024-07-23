@@ -12,6 +12,7 @@ const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 		control,
 		handleSubmit,
 		setValue,
+		getValues,
 		reset,
 		formState: { errors },
 	} = useForm({
@@ -28,6 +29,7 @@ const Form = forwardRef(({ vendors, types, loadData }, ref) => {
 
 	const open = (payment) => {
 		if (payment) {
+			console.log(getValues());
 			setValue("id", payment.id);
 			setValue("vendor_id", payment.vendor_id);
 			setValue("payment_at", payment.payment_at);

@@ -26,7 +26,7 @@ const PaymentScreen = () => {
 	];
 
 	const openForm = (payment) => {
-		if (payment.id) {
+		if (payment) {
 			payment.payment_at = new Date(payment.payment_at);
 		}
 		formRef.current.open(payment);
@@ -198,7 +198,7 @@ const PaymentScreen = () => {
 					right: 10,
 					position: "absolute",
 				}}
-				onPress={openForm}
+				onPress={() => openForm()}
 				label={<Ionicons name="create" size={20} color="white" />}
 				backgroundColor="#00A9FF"
 			/>

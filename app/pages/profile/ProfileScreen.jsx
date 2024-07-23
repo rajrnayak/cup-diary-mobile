@@ -1,5 +1,5 @@
 import { Button, Image, Text, View } from "react-native-ui-lib";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 import Divider from "../../component/Divider";
 import { useEffect, useRef, useState } from "react";
 import Form from "./Form";
@@ -12,13 +12,13 @@ import { StyleSheet } from "react-native";
 const ProfileScreen = () => {
 	const [userData, setUserData] = useState({
 		id: null,
-		username: '',
-		first_name: '',
-		last_name: '',
-		email: '',
-		mobile_number: '',
-		role: '',
-		joining_date: '',
+		username: "",
+		first_name: "",
+		last_name: "",
+		email: "",
+		mobile_number: "",
+		role: "",
+		joining_date: "",
 		// profile_image:{
 		// 	path:''
 		// }
@@ -36,7 +36,6 @@ const ProfileScreen = () => {
 	useEffect(() => {
 		loadData();
 	}, []);
-
 
 	async function loadData() {
 		const { user } = store.getState().authUser;
@@ -68,16 +67,13 @@ const ProfileScreen = () => {
 	}
 	return (
 		<>
-			<View flex gap-5 >
+			<View flex gap-5>
 				<View flex-3 center margin-10 backgroundColor="white" style={{ borderRadius: 20 }}>
-
 					<View flex center gap-10>
-						<View backgroundColor="#4bc2ff21" height={80} width={80} style={{ borderRadius: 40, borderColor: '#5cc0b6', borderWidth: 1.5 }} center>
+						<View backgroundColor="#4bc2ff21" height={80} width={80} style={{ borderRadius: 40, borderColor: "#5cc0b6", borderWidth: 1.5 }} center>
 							{/* <Text text30BO color='#68b6dd'>MS</Text> */}
 							{/* {fields.profile_image_file && <Image source={{ uri: http://192.168.1.9:8000/images/profile/1720433474-raj.jpeg }} style={styles.thumbnail} />} */}
-							{userData.profile_image_path ? 
-								<Image source={{ uri: `http://192.168.1.9:8000/${userData.profile_image_path}` }} style={styles.thumbnail} /> : 
-								<Image source={{ uri: `http://192.168.1.9:8000/storage/images/profile/default-profile.jpeg`}} style={styles.thumbnail} />}
+							{userData.profile_image_path ? <Image source={{ uri: `http://192.168.1.9:8000/${userData.profile_image_path}` }} style={styles.thumbnail} /> : <Image source={{ uri: `http://192.168.1.9:8000/storage/images/profile/default-profile.jpeg` }} style={styles.thumbnail} />}
 						</View>
 						<Text text60>{userData.username}</Text>
 						<Text text70L>{userData.role_name}</Text>
@@ -87,58 +83,78 @@ const ProfileScreen = () => {
 					<View flex-2>
 						<View flex row margin-5 padding-5>
 							<View flex centerV>
-								<Text centerH text60BO>User Detail</Text>
+								<Text centerH text60BO>
+									User Detail
+								</Text>
 							</View>
 							<View>
-								<Ionicons name='create-outline' color={'blue'} size={30} onPress={() => { openForm(userData) }} />
+								<Ionicons
+									name="create-outline"
+									color={"blue"}
+									size={30}
+									onPress={() => {
+										openForm(userData);
+									}}
+								/>
 							</View>
 						</View>
 						<Divider />
 						<View flex row margin-5 padding-5>
-							<View >
-								<Ionicons name='person-outline' size={30} />
+							<View>
+								<Ionicons name="person-outline" size={30} />
 							</View>
 							<View paddingL-10>
-								<Text centerH text70>{userData.first_name + " " + userData.last_name}</Text>
+								<Text centerH text70>
+									{userData.first_name + " " + userData.last_name}
+								</Text>
 							</View>
 						</View>
 						<View flex row margin-5 padding-5>
-							<View >
-								<Ionicons name='call-outline' size={30} />
+							<View>
+								<Ionicons name="call-outline" size={30} />
 							</View>
 							<View paddingL-10>
-								<Text centerH text70>{userData.mobile_number}</Text>
+								<Text centerH text70>
+									{userData.mobile_number}
+								</Text>
 							</View>
 						</View>
 						<View flex row margin-5 padding-5>
-							<View >
-								<Ionicons name='mail-outline' size={30} />
+							<View>
+								<Ionicons name="mail-outline" size={30} />
 							</View>
 							<View paddingL-10>
-								<Text centerH text70>{userData.email}</Text>
+								<Text centerH text70>
+									{userData.email}
+								</Text>
 							</View>
 						</View>
 						<View flex row margin-5 padding-5>
-							<View >
-								<Ionicons name='calendar' size={30} />
+							<View>
+								<Ionicons name="calendar" size={30} />
 							</View>
 							<View paddingL-10>
-								<Text centerH text70>{userData.joining_date}</Text>
+								<Text centerH text70>
+									{userData.joining_date}
+								</Text>
 							</View>
 						</View>
 					</View>
-					<View flex-0>
-					</View>
+					<View flex-0></View>
 				</View>
 				<View flex-2 center margin-10 backgroundColor="#4bc2ff21" style={{ borderRadius: 20 }}>
 					{/* <Text>helloo</Text> */}
 					<View flex-0 margin-5 padding-5>
 						{/* <Ionicons name='lock-closed-outline' size={30} /> */}
-						<Text centerH text70 color='blue'>forgot password</Text>
+						<Text centerH text70 color="blue">
+							forgot password
+						</Text>
 					</View>
 					<View flex-0 margin-5 padding-5>
 						{/* <Ionicons name='lock-closed-outline' size={30} /> */}
-						<Text centerH text70 color='red' onPress={LogOut}>Log out</Text>
+						<Text centerH text70 color="red" onPress={LogOut}>
+							Log out
+						</Text>
 					</View>
 				</View>
 			</View>
@@ -150,7 +166,7 @@ const ProfileScreen = () => {
 export default ProfileScreen;
 const styles = StyleSheet.create({
 	thumbnail: {
-		borderRadius:40,
+		borderRadius: 40,
 		width: 70,
 		height: 70,
 		resizeMode: "contain",
